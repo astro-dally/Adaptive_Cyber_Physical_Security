@@ -1,0 +1,24 @@
+# Literature Review: Adaptive Cyber-Physical Security
+
+## 1. Evolution of Intrusion Detection Systems
+Modern cyber-physical systems (CPS) integrate networked computation with physical processes, creating high-value targets for sophisticated adversaries. As network environments have scaled in complexity, Intrusion Detection Systems (IDS) have evolved from static, rule-based firewalls to dynamic, continuous monitoring platforms. Early systems were designed strictly for localized enterprise networks, but today's cyber-physical threat landscape spans cloud infrastructure, IoT devices, and industrial control systems, requiring a fundamental shift in how we detect and mitigate threats.
+
+## 2. Signature-Based vs. Anomaly-Based Systems
+Intrusion detection traditionally follows two distinct paradigms:
+- **Signature-based systems** compare incoming network traffic against a database of known attack fingerprints. While highly precise and efficient at identifying familiar threats, they are inherently reactive and unable to detect novel exploits.
+- **Anomaly-based systems** construct a baseline of normal network behavior and flag any statistical deviations as potential threats. This approach is proactive, offering a theoretical defense against previously unseen attacks, but often suffers from high false-positive rates due to the unpredictable nature of legitimate network traffic.
+
+## 3. Limitations of Traditional Methods
+Traditional intrusion detection methods face severe limitations in modern environments. Signature-based systems systematically fail against zero-day attacks—novel threats that exploit undiscovered vulnerabilities before a signature can be authored. Conversely, pure anomaly-based systems struggle to generalize normal behavior, leading to alert fatigue for security analysts. Furthermore, as network traffic encryption becomes ubiquitous, traditional deep-packet inspection is increasingly obsolete, forcing detection mechanisms to rely entirely on flow statistics and metadata.
+
+## 4. The Role of Machine Learning in Cybersecurity
+Machine Learning (ML) bridges the gap between static rules and unpredictable anomalies. By training on vast amounts of network flow data, ML models can uncover latent patterns that human analysts might miss. Supervised learning algorithms, such as Random Forest, excel at classifying known attack taxonomies with near-perfect precision, overcoming the limitations of manual signature creation. Simultaneously, unsupervised and semi-supervised techniques, such as One-Class SVMs and Autoencoders, frame zero-day detection as a boundary estimation problem, significantly improving novelty recognition without relying on explicit malicious labels (Guo, 2023; NIST SP 800-94). 
+
+## 5. Why the CIC-IDS-2018 Dataset is Important
+The evaluation of any IDS depends heavily on the quality of its underlying benchmark. Legacy datasets, such as KDDCup99 and NSL-KDD, lack modern attack vectors and fail to represent contemporary network topologies. The transition to the CIC-IDS-2017 dataset offered a massive improvement, but the **CIC-IDS-2018** benchmark (Sharafaldin et al., 2018) stands as the gold standard for modern evaluation. It features a massive, diverse set of real-world traffic flows encompassing up-to-date attack scenarios—including Brute-Force, Botnets, DoS/DDoS, and Web Attacks—extracted into structured, statistical features. This richness makes it explicitly suited for evaluating advanced ML pipelines on both seen and unseen threats.
+
+## 6. Gaps in Existing Research
+Despite the adoption of ML in cybersecurity, a significant gap remains in addressing the "open-world" assumption. Most existing research achieves high theoretical accuracy by evaluating models on randomized train-test splits that inadvertently leak future attack knowledge into the training phase. When these models face true zero-day threats in a production cyber-physical environment, their detection recall plummets. There is a lack of structured hybrid evaluation frameworks that rigorously partition known attacks for supervised learning while entirely withholding novel attack classes to test anomaly estimation.
+
+## 7. Justification of this Project
+This project directly addresses the critical open-world weakness in modern intrusion detection. By utilizing the CIC-IDS-2018 dataset, we design an adaptive detection pipeline that explicitly tests for true zero-day scenarios. We justify the necessity of pairing a discriminative classifier (such as Random Forest or XGBoost) with an anomaly detector (such as One-Class SVM). This dual-model approach provides the best of both worlds: high-confidence classification for historical threats and conservative, reliable novelty detection for emerging zero-day vulnerabilities. Ultimately, this work provides a defensible, scalable architecture for securing dynamic cyber-physical systems.
