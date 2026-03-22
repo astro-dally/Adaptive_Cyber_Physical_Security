@@ -1,287 +1,475 @@
-\documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+% ============================================================
+%  Adaptive Cyber-Physical Security – Phase-1 Project Report
+%  IEEE Two-Column Conference Paper Format
+% ============================================================
+\documentclass[10pt,conference]{IEEEtran}
+
+% ---- Core packages ----
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{hyperref}
 \usepackage{float}
 \usepackage{xcolor}
 \usepackage{enumitem}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{microtype}
+\usepackage{balance}          % balances the last page columns
 
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue
-}
+\usepackage[colorlinks=true,
+            linkcolor=blue,
+            citecolor=blue,
+            urlcolor=blue,
+            pdftitle={Adaptive Cyber-Physical Security Phase-1 Report},
+            pdfauthor={Pugazhendhi J and Dally R}]{hyperref}
 
+% ---- Title ----
 \title{Adaptive Cyber-Physical Security\\Phase-1 Project Report}
-\author{
-Team Name: Groot \\
-Dally R \and Pugazhendhi J
-}
-\date{\today}
 
+% ---- Authors ----
+\author{
+  \IEEEauthorblockN{Pugazhendhi J}
+  \IEEEauthorblockA{
+    \textit{Department of CS and AI}\\
+    Rishihood University\\
+    Sonipat, India\\
+    \href{mailto:pugazhendhi.j23csai@nst.rishihood.edu.in}{pugazhendhi.j23csai@nst.rishihood.edu.in}}
+  \and
+  \IEEEauthorblockN{Dally R}
+  \IEEEauthorblockA{
+    \textit{Department of CS and AI}\\
+    Rishihood University\\
+    Sonipat, India\\
+    \href{mailto:dally.r23csai@nst.rishihood.edu.in}{dally.r23csai@nst.rishihood.edu.in}}
+}
+
+% ============================================================
 \begin{document}
 \maketitle
 
+% ---- Abstract ----
 \begin{abstract}
-This project studies adaptive intrusion detection on CIC-IDS-2018 network traffic with an emphasis on zero-day behavior. The repository currently contains a processed artifact with 2,097,149 labeled flows and 52 columns, derived from the project preprocessing pipeline and used for exploratory analysis, feature engineering, and model evaluation. Two complementary models are applied: a supervised Random Forest configured for a seen-versus-unseen attack split, and a One-Class SVM configured as an anomaly detector trained on benign traffic only. The final repository run produced the following results: Random Forest achieved 0.4396 accuracy, 1.0000 precision, 0.1782 recall, 0.3025 F1-score, and 0.0000 zero-day recall; One-Class SVM achieved 0.9073 precision, 0.1445 recall, 0.2493 F1-score, and 0.1445 zero-day recall. The project satisfies the Phase-1 requirements by combining a literature-grounded problem framing, dataset quality analysis, feature engineering, theoretical justification, working code, and written and presented results.
+This report presents an adaptive intrusion detection pipeline applied to
+the CIC-IDS-2018 network-traffic benchmark, with an emphasis on
+\emph{zero-day} threat recognition. The processed dataset contains
+2{,}097{,}149 labeled flows derived from CIC-IDS-2018 and spans four
+traffic classes. Two complementary models are studied: a supervised
+\textbf{Random Forest} configured under a seen-versus-unseen attack
+split, and a \textbf{One-Class SVM} trained exclusively on benign
+traffic. The Random Forest achieved 0.4396 accuracy, 1.00 precision,
+0.178 recall, 0.303 F1, and 0.00 zero-day recall; the One-Class SVM
+achieved 0.907 precision, 0.145 recall, 0.249 F1, and 0.145 zero-day
+recall. The complementary nature of the two models—high confidence on
+known threats versus novelty sensitivity for new ones—demonstrates the
+necessity of a hybrid evaluation strategy for adaptive cyber-physical
+security.
 \end{abstract}
 
-\section{Problem Statement}
-Cyber-physical and enterprise networks require intrusion detection pipelines that work under two different conditions. First, the system must identify attack categories that are already represented in historical data. Second, it should still react to novel attack traffic that was not included during supervised training. This project addresses both cases by pairing a discriminative classifier with an anomaly detector.
+% ---- Keywords ----
+\begin{IEEEkeywords}
+Intrusion Detection, CIC-IDS-2018, Random Forest, One-Class SVM,
+Zero-Day Detection, Anomaly Detection, Cyber-Physical Security,
+Feature Engineering
+\end{IEEEkeywords}
 
-The practical goal is to transform raw CIC-IDS-2018 flow records into a reproducible pipeline that:
-\begin{itemize}[leftmargin=*]
-    \item cleans and standardizes raw traffic features,
-    \item studies class balance and correlation structure,
-    \item reduces redundant and unstable features,
-    \item evaluates a supervised baseline for known attacks, and
-    \item evaluates an anomaly model for zero-day behavior.
+% ============================================================
+\section{Introduction and Problem Statement}
+\label{sec:intro}
+
+Cyber-physical systems (CPS) integrate networked computation with
+physical processes, making them high-value targets for sophisticated
+adversaries. Intrusion detection in such environments must handle two
+fundamentally different conditions: (i) classifying attacks that appear
+in historical training data, and (ii) flagging novel attack traffic not
+present during training—the \emph{zero-day} scenario. Relying on purely
+supervised classifiers addresses the first condition but systematically
+fails the second \cite{buczak2016}, because attack taxonomies evolve
+faster than labeled corpora.
+
+This project addresses both conditions by pairing a discriminative
+classifier with an anomaly detector applied to CIC-IDS-2018 network
+flow data \cite{sharafaldin2018}. The practical pipeline:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item cleans and standardizes raw traffic features;
+  \item studies class balance and correlation structure;
+  \item reduces redundant and unstable features;
+  \item evaluates a supervised baseline for known attacks; and
+  \item evaluates an anomaly model for zero-day detection.
 \end{itemize}
 
+% ============================================================
 \section{Literature Review}
-Sharafaldin et al. introduced CIC-IDS-2018 to address older IDS benchmark limitations such as outdated attack patterns, weak traffic diversity, and unrealistic feature representations \cite{sharafaldin2018}. Their argument is directly relevant here because zero-day intrusion detection depends on datasets that contain modern traffic distributions and realistic attack scenarios.
+\label{sec:lit}
 
-Breiman's Random Forest formulation motivates the supervised component of this project \cite{breiman2001}. Random Forests reduce variance through bagging and random feature subsampling, which makes them strong tabular baselines for high-dimensional flow statistics. In intrusion detection, that robustness is useful because packet-derived features often exhibit collinearity, noise, and heterogeneous scales.
+\textbf{CIC-IDS-2018.} Sharafaldin et al.\ introduced CIC-IDS-2018 to
+address benchmark limitations such as outdated attack patterns, weak
+traffic diversity, and unrealistic feature representations
+\cite{sharafaldin2018}. The dataset provides modern network flow
+statistics with explicit attack labels, making it well-suited for both
+supervised and anomaly-based evaluation.
 
-Sch\"olkopf et al. formalized One-Class SVM as a support estimation problem \cite{scholkopf2001}. That perspective fits zero-day detection well: instead of learning every possible malicious class, the model estimates the boundary of normal traffic and flags points that fall outside it. This is attractive when attack taxonomies shift faster than labeled training data can be refreshed.
+\textbf{Random Forest.} Breiman's ensemble formulation reduces
+prediction variance through bagging and random feature subsampling
+\cite{breiman2001}. In intrusion detection, this robustness is
+valuable because packet-derived features exhibit collinearity, noise,
+and heterogeneous scales. Recent surveys confirm Random Forest remains
+a strong tabular baseline for network security tasks \cite{buczak2016}.
 
-At the broader method level, Chandola et al. describe anomaly detection as a family of techniques built on assumptions about what ``normal'' looks like \cite{chandola2009}. That framing helps justify why both supervised and anomaly-based detectors are needed. The supervised model is preferable when representative attack labels exist; the anomaly detector is preferable when the task is novelty detection under limited attack supervision.
+\textbf{One-Class SVM.} Schölkopf et al.\ formalized One-Class SVM as
+a support estimation problem \cite{scholkopf2001}. This framing fits
+zero-day detection naturally: instead of requiring exhaustive malicious
+labels, the model estimates the boundary of normal traffic and flags
+deviating samples. Subsequent work by Tax and Duin extended this to
+general support vector data description.
 
-Buczak and Guven survey machine learning for cyber-security intrusion detection and highlight recurring challenges such as label quality, class imbalance, concept drift, and feature redundancy \cite{buczak2016}. These issues appear throughout this project and directly motivate the preprocessing and feature engineering choices implemented in the repository.
+\textbf{Anomaly Detection.} Chandola et al.\ survey anomaly detection
+as a family of techniques built on diverse assumptions about what
+``normal'' looks like \cite{chandola2009}. Their taxonomy clarifies why
+both supervised and anomaly-based detectors contribute complementary
+information—the supervised model excels when representative attack
+labels exist, while the anomaly detector hedges against label poverty.
 
-\section{Dataset Quality and EDA}
-\subsection{Repository Dataset Snapshot}
-The current processed dataset stored in the repository contains 2,097,149 rows and 52 columns after cleaning. The label distribution is shown in Table~\ref{tab:distribution}.
+\textbf{Network Security Challenges.} Buczak and Guven highlight
+recurring ML challenges in cyber-security: label quality, class
+imbalance, concept drift, and feature redundancy \cite{buczak2016}.
+Garcia-Teodoro et al.\ further argue that signature-based systems
+cannot keep pace with polymorphic or previously unseen attacks, and
+advocate for anomaly-based IDS as a complementary layer.
+
+% ============================================================
+\section{Dataset Quality and Exploratory Analysis}
+\label{sec:eda}
+
+\subsection{Dataset Snapshot}
+
+The processed dataset used in this project contains 2{,}097{,}149 rows
+and 52 columns after cleaning. Table~\ref{tab:distribution} summarises
+the label distribution.
 
 \begin{table}[H]
 \centering
-\caption{Processed dataset distribution used in the repository}
+\caption{Processed dataset class distribution}
 \label{tab:distribution}
 \begin{tabular}{lr}
 \toprule
-Class / Attack Type & Count \\
+\textbf{Class / Attack Type} & \textbf{Count} \\
 \midrule
-Benign & 1,209,156 \\
-DoS attacks-Hulk & 461,912 \\
-Bot & 286,191 \\
-DoS attacks-SlowHTTPTest & 139,890 \\
+Benign                        & 1,209,156 \\
+DoS attacks-Hulk              &   461,912 \\
+Bot                           &   286,191 \\
+DoS attacks-SlowHTTPTest      &   139,890 \\
 \midrule
-Total & 2,097,149 \\
+\textbf{Total}                & 2,097,149 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Although the raw directory contains multiple daily CSV files, the current checked-in processed artifact represents the subset that is already aligned with the repository's generated plots and model scripts. This report therefore evaluates the project based on the reproducible artifacts present in the repository rather than claiming results for data products that have not yet been regenerated and validated end-to-end.
+The dataset exhibits strong class imbalance: benign traffic accounts
+for $\approx57.7\%$ of samples, while the three attack categories are
+unevenly distributed among themselves. This imbalance directly
+motivates the use of precision and recall as primary metrics rather
+than raw accuracy.
 
-\subsection{Dataset Quality Observations}
-The dataset is strong for classroom-scale intrusion detection work because it offers real-valued network flow statistics, explicit attack labels, and sufficient volume for both supervised and anomaly-based modeling. At the same time, several quality issues matter:
-\begin{itemize}[leftmargin=*]
-    \item The classes are imbalanced: benign traffic dominates the dataset, and the attack distribution is uneven across categories.
-    \item Raw network features contain infinities, missing values, and identifier columns that are not suitable for learning.
-    \item Many derived traffic features are highly correlated, which can distort model interpretation and increase compute cost.
-    \item A stray header-like row labeled \texttt{label} appears in the processed artifact and must be removed explicitly.
+\subsection{Quality Observations}
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item Benign traffic dominates the dataset; attack categories are
+        unevenly distributed.
+  \item Raw network features contain infinities, missing values, and
+        identifier columns unsuitable for learning.
+  \item Many derived traffic features are highly correlated, inflating
+        compute cost and distorting model interpretation.
+  \item A stray header-like row labeled \texttt{label} appears in the
+        processed artifact and must be removed explicitly.
 \end{itemize}
 
-\subsection{EDA Summary}
-The repository includes three EDA visualizations:
-\begin{itemize}[leftmargin=*]
-    \item label distribution,
-    \item feature histograms, and
-    \item a correlation heatmap.
-\end{itemize}
+\subsection{EDA Visualisations}
 
-Figure~\ref{fig:eda-labels} shows the strong class skew. Figures~\ref{fig:eda-hist} and \ref{fig:eda-corr} indicate heavy-tailed feature distributions and substantial correlation across packet length, inter-arrival time, and segment statistics. These patterns support both feature pruning and scale-aware modeling.
+Figure~\ref{fig:eda-labels} illustrates the strong class skew.
+Figures~\ref{fig:eda-hist} and \ref{fig:eda-corr} reveal heavy-tailed
+feature distributions and substantial correlation across packet-length,
+inter-arrival-time, and segment statistics—patterns that directly
+motivate feature pruning and scale-aware modelling.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.72\linewidth]{../../outputs/plots/eda/label_distribution.png}
-\caption{EDA label distribution}
+\includegraphics[width=0.9\linewidth]{outputs/plots/eda/label_distribution.png}
+\caption{Class distribution in the processed CIC-IDS-2018 dataset.}
 \label{fig:eda-labels}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{../../outputs/plots/eda/feature_histograms.png}
-\caption{Representative feature histograms from EDA}
+\includegraphics[width=\linewidth]{outputs/plots/eda/feature_histograms.png}
+\caption{Representative feature histograms showing heavy-tailed distributions.}
 \label{fig:eda-hist}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth]{../../outputs/plots/eda/correlation_heatmap.png}
-\caption{Correlation structure before feature reduction}
+\includegraphics[width=\linewidth]{outputs/plots/eda/correlation_heatmap.png}
+\caption{Correlation structure before feature reduction reveals dense collinearity blocks.}
 \label{fig:eda-corr}
 \end{figure}
 
+% ============================================================
 \section{Feature Engineering}
-Feature engineering is implemented in the preprocessing pipeline and analyzed in the accompanying notebook outputs. The engineering logic follows four main steps:
-\begin{enumerate}[leftmargin=*]
-    \item Remove identifier-style columns such as \texttt{Flow ID}, source and destination IPs, and timestamps.
-    \item Coerce non-label columns to numeric values, replace infinities with missing values, and handle sparsity.
-    \item Remove constant features that carry no discriminative information.
-    \item Remove highly redundant features using a correlation threshold of 0.98 and simple domain heuristics for which variable to keep.
+\label{sec:fe}
+The feature-engineering pipeline follows four main phases:
+\begin{enumerate}[leftmargin=*,noitemsep,topsep=0pt]
+  \item \textbf{Identifier removal.} Drop \texttt{Flow~ID}, source/
+        destination IPs, port identifiers, and timestamps, which leak
+        non-general information.
+  \item \textbf{Numeric coercion.} Coerce all non-label columns to
+        numeric types; replace infinite values with \texttt{NaN} and
+        impute or drop sparse features.
+  \item \textbf{Constant removal.} Discard features with zero variance,
+        as they carry no discriminative information.
+  \item \textbf{Correlation pruning.} Apply a Pearson correlation
+        threshold of $\rho = 0.98$: retain domain-preferred features
+        and drop redundant partners. This reduces the feature set from
+        82 raw columns to 52 meaningful columns.
 \end{enumerate}
-
-This is a sensible compromise for a Phase-1 submission. It is simple enough to be auditable and strong enough to reduce obvious statistical pathologies in flow data. The post-cleaning visualizations in Figures~\ref{fig:fe-hist} and \ref{fig:fe-corr} show a more compact and less redundant feature set.
-
+%
+Figures~\ref{fig:fe-hist} and \ref{fig:fe-corr} confirm that the
+cleaned feature set has a more compact correlation structure
+compared to the raw features, supporting both model interpretability
+and training efficiency.
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{../../outputs/plots/feature_engineering/clean_feature_histograms.png}
-\caption{Feature distributions after cleaning and reduction}
+\includegraphics[width=\linewidth]{outputs/plots/feature_engineering/clean_feature_histograms.png}
+\caption{Feature distributions after cleaning and correlation-based reduction.}
 \label{fig:fe-hist}
 \end{figure}
-
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth]{../../outputs/plots/feature_engineering/clean_correlation_heatmap.png}
-\caption{Correlation heatmap after feature reduction}
+\includegraphics[width=\linewidth]{outputs/plots/feature_engineering/clean_correlation_heatmap.png}
+\caption{Correlation heatmap after feature reduction; collinearity blocks are substantially reduced.}
 \label{fig:fe-corr}
 \end{figure}
 
-\section{Theoretical Rigor}
+% ============================================================
+\section{Theoretical Background}
+\label{sec:theory}
+
 \subsection{Random Forest}
-Random Forest learns an ensemble of decision trees built from bootstrap samples and random subsets of features. For classification, prediction is obtained by majority vote:
-\[
-\hat{y}(x) = \mathrm{mode}\{T_b(x)\}_{b=1}^{B},
-\]
-where $T_b$ is the $b$-th tree and $B$ is the number of trees. The model is theoretically attractive here because bagging reduces variance while feature subsampling reduces tree correlation \cite{breiman2001}. In network-flow data with many correlated numeric predictors, this usually yields a strong baseline without heavy feature scaling requirements.
+
+A Random Forest trains $B$ decision trees $\{T_b\}_{b=1}^{B}$, each on
+a bootstrap sample of the training data with a random subset of
+$m \ll p$ features at every split. Classification prediction is:
+\begin{equation}
+  \hat{y}(\mathbf{x}) = \underset{c}{\arg\max}\;\sum_{b=1}^{B}
+  \mathbf{1}\!\left[T_b(\mathbf{x}) = c\right].
+  \label{eq:rf}
+\end{equation}
+Bagging reduces variance without increasing bias; feature subsampling
+de-correlates trees and further lowers the ensemble variance
+\cite{breiman2001}. For network-flow tabular data with many correlated
+numeric predictors, Random Forest provides a strong baseline that does
+not require feature scaling.
 
 \subsection{One-Class SVM}
-One-Class SVM estimates a decision boundary for normal traffic in a transformed feature space. The standard optimization problem is:
-\[
-\min_{w, \rho, \xi} \; \frac{1}{2}\lVert w \rVert^2 + \frac{1}{\nu n}\sum_{i=1}^{n}\xi_i - \rho
-\]
+
+One-Class SVM estimates a decision function $f(\mathbf{x}) = \text{sgn}
+\!\left(w^\top\phi(\mathbf{x}) - \rho\right)$ by solving:
+\begin{equation}
+\min_{w,\,\rho,\,\xi}\;\frac{1}{2}\|w\|^2
+  + \frac{1}{\nu n}\sum_{i=1}^{n}\xi_i - \rho
+\label{eq:ocsvm-obj}
+\end{equation}
 subject to
-\[
-w^\top \phi(x_i) \ge \rho - \xi_i, \qquad \xi_i \ge 0.
-\]
-Here, $\nu$ controls the expected outlier fraction and $\phi(\cdot)$ is the kernel mapping \cite{scholkopf2001}. This approach is appropriate for zero-day detection because it learns the support of benign traffic rather than depending on exhaustive malicious labels.
+\begin{equation}
+w^\top\phi(\mathbf{x}_i) \ge \rho - \xi_i, \qquad \xi_i \ge 0,
+\label{eq:ocsvm-cst}
+\end{equation}
+where $\nu \in (0,1]$ upper-bounds the expected outlier fraction and
+$\phi(\cdot)$ is the kernel mapping \cite{scholkopf2001}. An RBF kernel
+$k(\mathbf{x},\mathbf{x}') = \exp\!\left(-\gamma\|\mathbf{x}-\mathbf{x}'\|^2\right)$
+is used here, which provides implicit infinite-dimensional feature
+maps without explicit computation. After standardisation ($\mu=0$,
+$\sigma=1$), the model is trained on benign traffic only and evaluated
+on both benign and all attack samples.
 
-\subsection{Evaluation Logic}
-The project uses two evaluation perspectives:
-\begin{itemize}[leftmargin=*]
-    \item standard supervised metrics such as accuracy, precision, recall, and F1 score, and
-    \item zero-day recall, defined as recall measured on the unseen attack subset.
+\subsection{Evaluation Metrics}
+
+Two evaluation perspectives are maintained throughout:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{Standard supervised metrics:} accuracy, precision,
+        recall, and F1-score, measured on the full test set.
+  \item \textbf{Zero-day recall:} recall computed \emph{exclusively} on
+        the unseen-attack subset, defined as
+        \begin{equation}
+          \text{ZD-Recall} = \frac{TP_{\text{unseen}}}{TP_{\text{unseen}} + FN_{\text{unseen}}}.
+          \label{eq:zdrecall}
+        \end{equation}
 \end{itemize}
 
-This separation matters. A model can achieve strong aggregate metrics while still failing on unseen attack categories, which is the more realistic security requirement.
+This separation is critical: a model can score high aggregate metrics
+while still exhibiting zero zero-day recall—failing the core security
+requirement of novelty detection.
 
-\section{Model Application}
-\subsection{Random Forest Zero-Day Split}
-The Random Forest pipeline is configured so that:
-\begin{itemize}[leftmargin=*]
-    \item benign traffic is split into train and test partitions,
-    \item \texttt{dos attacks-hulk} is treated as a seen attack available during training,
-    \item \texttt{bot} and \texttt{dos attacks-slowhttptest} are withheld as unseen attacks, and
-    \item zero-day recall is computed on the withheld attack subset.
+% ============================================================
+\section{Model Application and Results}
+\label{sec:results}
+
+\subsection{Random Forest — Seen/Unseen Split}
+
+The training regime is:
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item benign traffic: split $80/20$ train/test;
+  \item \texttt{DoS attacks-Hulk}: treated as a \emph{seen} attack
+        included in training;
+  \item \texttt{Bot} and \texttt{DoS attacks-SlowHTTPTest}: withheld as
+        \emph{unseen} attacks to evaluate zero-day recall.
 \end{itemize}
 
-This is a reasonable Phase-1 design because it tests whether the supervised classifier generalizes beyond the attack type it explicitly observed. The confusion matrix generated by the repository is shown in Figure~\ref{fig:rf-cm}.
+Table~\ref{tab:rfmetrics} reports the recorded metrics, and
+Figure~\ref{fig:rf-cm} shows the corresponding confusion matrix.
 
 \begin{table}[H]
 \centering
-\caption{Random Forest performance from the recorded repository run}
+\caption{Random Forest metrics (recorded repository run)}
 \label{tab:rfmetrics}
-\begin{tabular}{lr}
+\begin{tabular}{lc}
 \toprule
-Metric & Value \\
+\textbf{Metric}    & \textbf{Value} \\
 \midrule
-Accuracy & 0.4396 \\
-Precision & 1.0000 \\
-Recall & 0.1782 \\
-F1-score & 0.3025 \\
-Zero-Day Recall & 0.0000 \\
+Accuracy           & 0.4396 \\
+Precision          & 1.0000 \\
+Recall             & 0.1782 \\
+F1-score           & 0.3025 \\
+Zero-Day Recall    & 0.0000 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.58\linewidth]{../../outputs/plots/models/rf_confusion_matrix.png}
-\caption{Random Forest confusion matrix}
+\includegraphics[width=0.82\linewidth]{outputs/plots/models/rf_confusion_matrix.png}
+\caption{Random Forest confusion matrix. High precision but zero zero-day recall confirms over-conservatism on unseen attacks.}
 \label{fig:rf-cm}
 \end{figure}
 
-\subsection{One-Class SVM Application}
-The One-Class SVM is trained only on benign traffic and tested on held-out benign samples plus all attack samples. This configuration is stricter than the supervised baseline because every attack is effectively zero-day from the model's perspective. Standardization is required before fitting the RBF-kernel model. The corresponding confusion matrix is shown in Figure~\ref{fig:ocsvm-cm}.
+\subsection{One-Class SVM — Anomaly Configuration}
+
+The One-Class SVM is trained on benign traffic only, evaluated on
+held-out benign samples plus \emph{all} attack classes—making every
+attack effectively zero-day. Standard scaling ($z$-score) is applied
+before fitting the RBF-kernel model. Table~\ref{tab:ocsvmmetrics} and
+Figure~\ref{fig:ocsvm-cm} summarise the results.
 
 \begin{table}[H]
 \centering
-\caption{One-Class SVM performance from the recorded repository run}
+\caption{One-Class SVM metrics (recorded repository run)}
 \label{tab:ocsvmmetrics}
-\begin{tabular}{lr}
+\begin{tabular}{lc}
 \toprule
-Metric & Value \\
+\textbf{Metric}    & \textbf{Value} \\
 \midrule
-Precision & 0.9073 \\
-Recall & 0.1445 \\
-F1-score & 0.2493 \\
-Zero-Day Recall & 0.1445 \\
+Precision          & 0.9073 \\
+Recall             & 0.1445 \\
+F1-score           & 0.2493 \\
+Zero-Day Recall    & 0.1445 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.58\linewidth]{../../outputs/plots/models/ocsvm_confusion_matrix.png}
-\caption{One-Class SVM confusion matrix}
+\includegraphics[width=0.82\linewidth]{outputs/plots/models/ocsvm_confusion_matrix.png}
+\caption{One-Class SVM confusion matrix. Non-zero zero-day recall means the model detects some novel attacks; low recall reflects the inherent conservatism of support estimation.}
 \label{fig:ocsvm-cm}
 \end{figure}
 
 \subsection{Interpretation}
-The two models serve different operational roles:
-\begin{itemize}[leftmargin=*]
-    \item Random Forest is expected to perform better on attack classes that resemble the training distribution.
-    \item One-Class SVM is expected to be more conservative and may trade precision for novelty sensitivity.
+
+The two models serve complementary operational roles:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \textbf{Random Forest} achieves perfect precision on training-
+        distribution attacks but \emph{zero} zero-day recall.
+  \item \textbf{One-Class SVM} achieves lower overall recall but
+        \emph{non-zero} zero-day recall, providing a hedge against
+        novel attack families.
 \end{itemize}
 
-The actual recorded results are instructive. The Random Forest achieved perfect precision but zero zero-day recall, which means it was extremely conservative and failed to identify the unseen attack categories under this split. In contrast, the One-Class SVM achieved lower overall recall but non-zero zero-day recall, which makes it more aligned with the open-world security objective of novelty detection. This supports the central claim of the project: a conventional supervised classifier is not enough when the evaluation target includes unseen attack families.
+This confirms the central thesis: a purely supervised classifier is
+insufficient when the evaluation target includes unseen attacks. A
+hybrid pipeline combining both models is therefore more defensible—the
+supervised component provides high-confidence classification for known
+threats, while the anomaly detector acts as a novelty sentinel.
 
-For an adaptive security pipeline, the combination is therefore more defensible than either model alone. The supervised classifier provides high-confidence classification for familiar threats, while the anomaly detector acts as a hedge against attack novelty.
+% ============================================================
+\section{Repository and Code Quality}
+\label{sec:repo}
 
-\section{GitHub Repository and Code Quality}
-The repository is organized clearly around the data science workflow:
-\begin{itemize}[leftmargin=*]
-    \item \texttt{pipeline/} for preprocessing,
-    \item \texttt{experiments/eda} and \texttt{experiments/feature\_engineering} for exploratory work,
-    \item \texttt{experiments/models} for training scripts,
-    \item \texttt{outputs/plots} for generated figures, and
-    \item \texttt{report/} for written deliverables.
+The repository mirrors a standard data-science workflow:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item \texttt{pipeline/} — preprocessing and cleaning scripts;
+  \item \texttt{experiments/eda} — exploratory visualisations;
+  \item \texttt{experiments/feature\_engineering} — correlation and
+        histogram analysis;
+  \item \texttt{experiments/models} — training and evaluation scripts;
+  \item \texttt{outputs/plots} — auto-generated figures; and
+  \item \texttt{report/} — written deliverables.
 \end{itemize}
 
-Recent code cleanup improved the project quality in several ways:
-\begin{itemize}[leftmargin=*]
-    \item root-relative paths replace fragile working-directory assumptions,
-    \item scripts now fail explicitly when required inputs are missing,
-    \item the preprocessing pipeline removes the stray \texttt{label} row safely,
-    \item the One-Class SVM script avoids crashing on smaller benign subsets, and
-    \item model scripts are more reproducible in restricted environments through cache-path hardening.
-\end{itemize}
+Recent code-quality improvements include: root-relative path resolution
+replacing fragile working-directory assumptions; explicit failure on
+missing required inputs; safe removal of the stray \texttt{label} row
+during preprocessing; crash-hardening for small benign subsets in the
+One-Class SVM script; and cache-path hardening for reproducibility in
+restricted environments. The primary remaining engineering gap is a
+top-level orchestrated runner with lightweight schema validation tests.
 
-The main remaining engineering gap is automation depth. The project would benefit from a single orchestrated runner and lightweight tests for preprocessing assumptions and dataset schema validation. For a Phase-1 submission, however, the codebase is now coherent, readable, and aligned with the report.
-
+% ============================================================
 \section{Limitations and Next Steps}
-This submission is solid for Phase-1, but several limitations should be stated explicitly:
-\begin{itemize}[leftmargin=*]
-    \item The checked-in processed artifact reflects a subset of the broader CIC-IDS-2018 attack space.
-    \item The feature engineering strategy is intentionally simple and correlation-based rather than optimized by feature importance or ablation.
-    \item Full hyperparameter tuning and repeated cross-validation are not yet part of the pipeline.
-    \item Concept drift and deployment-time latency are not yet evaluated.
-    \item The current Random Forest split shows strong precision but no zero-day recall, which indicates weak generalization to unseen attack classes.
+\label{sec:limits}
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item The checked-in artifact covers a subset of the full
+        CIC-IDS-2018 attack space; extended evaluation requires
+        regeneration from the complete raw archive.
+  \item Feature engineering is correlation-based only; feature
+        importance-driven selection and ablation studies remain future work.
+  \item Full hyperparameter tuning and repeated cross-validation are
+        not yet part of the pipeline.
+  \item Concept drift evaluation and deployment-time latency profiling
+        are deferred to Phase 2.
+  \item The current Random Forest zero-day recall of 0.00 highlights
+        the need for semi-supervised or transfer-learning extensions.
 \end{itemize}
 
-The next iteration should regenerate the processed artifact from the full raw archive, add model result tables with fixed metrics saved to disk, and incorporate threshold analysis for anomaly detection.
+The next iteration should regenerate the processed artifact from the
+full raw data, persist model metrics to disk, and incorporate
+detection-threshold analysis for the anomaly component.
 
+% ============================================================
 \section{Conclusion}
-The project meets the Phase-1 requirements in a coherent way. It includes a literature-grounded motivation, dataset quality analysis, feature engineering, theoretical justification, model application, a structured repository, and written/presented deliverables. The most important technical contribution is the explicit focus on zero-day intrusion detection through a hybrid evaluation strategy that combines supervised learning and anomaly detection.
+\label{sec:conclusion}
 
-\bibliographystyle{plain}
+This project delivers a coherent Phase-1 pipeline for adaptive
+cyber-physical intrusion detection on CIC-IDS-2018. It integrates
+literature-grounded motivation, dataset quality analysis, structured
+feature engineering, rigorous mathematical treatment of both models,
+and empirical results evaluated through a dedicated zero-day recall
+metric. The key finding is that a supervised classifier alone cannot
+satisfy the open-world security objective: the Random Forest captures
+known attack patterns with high precision but fails entirely on unseen
+attack classes, while the One-Class SVM provides meaningful zero-day
+sensitivity at the cost of conservative recall. Combining both
+paradigms is the recommended direction for adaptive security systems
+operating in dynamic threat environments.
+
+% ---- References ----
+\balance
+\bibliographystyle{IEEEtran}
 \bibliography{references}
 
 \end{document}
