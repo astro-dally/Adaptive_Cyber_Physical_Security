@@ -1,0 +1,6 @@
+data/
+*.csv
+*.zip
+*.parquet
+**pycache**/
+.ipynb_checkpoints/

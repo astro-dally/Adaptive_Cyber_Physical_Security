@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive Cyber-Physical Security | Phase-1 Presentation</title>
+  <style>
+    :root {
+      --paper: #f5efe3;
+      --paper-2: #efe4d1;
+      --card: rgba(255, 251, 245, 0.9);
+      --card-strong: rgba(255, 255, 255, 0.96);
+      --ink: #13212c;
+      --muted: #55606a;
+      --line: rgba(19, 33, 44, 0.12);
+      --accent: #b74d2d;
+      --accent-2: #0f6b78;
+      --accent-3: #7e5a16;
+      --shadow: 0 18px 60px rgba(19, 33, 44, 0.12);
+      --max: 1220px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(183, 77, 45, 0.18), transparent 18%),
+        radial-gradient(circle at 88% 14%, rgba(15, 107, 120, 0.14), transparent 18%),
+        radial-gradient(circle at 80% 80%, rgba(126, 90, 22, 0.1), transparent 22%),
+        linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(245, 239, 227, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 28px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+      font-weight: 700;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav a {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.55);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .hero {
+      padding: 56px 0 30px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-panel,
+    .section,
+    .image-card,
+    .mini-card,
+    .quote-card {
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      border-radius: 34px;
+      background: linear-gradient(135deg, rgba(255, 251, 245, 0.98), rgba(246, 236, 220, 0.92));
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-copy::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(183, 77, 45, 0.16), transparent 70%);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 107, 120, 0.1);
+      color: var(--accent-2);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.08;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 5vw, 5.4rem);
+      max-width: 12ch;
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 2.8vw, 2.7rem);
+    }
+
+    h3 {
+      font-size: 1.18rem;
+      color: var(--accent-2);
+    }
+
+    p, li, td, th {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    .lede {
+      max-width: 64ch;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .tag {
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 107, 120, 0.15);
+      background: rgba(15, 107, 120, 0.08);
+      color: var(--accent-2);
+      font-size: 0.92rem;
+    }
+
+    .hero-panel {
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(19, 33, 44, 0.96), rgba(27, 46, 60, 0.94));
+      color: #f8f1e8;
+      padding: 28px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-panel h3,
+    .hero-panel p,
+    .hero-panel li {
+      color: #f8f1e8;
+    }
+
+    .hero-panel .muted {
+      color: rgba(248, 241, 232, 0.74);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.8rem;
+      line-height: 1;
+      color: #f7c37c;
+      margin-bottom: 6px;
+    }
+
+    .sections {
+      display: grid;
+      gap: 24px;
+      padding-bottom: 46px;
+    }
+
+    .section {
+      border-radius: 30px;
+      background: var(--card);
+      padding: 28px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-index {
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .mini-card,
+    .quote-card {
+      border-radius: 22px;
+      padding: 20px;
+      background: var(--card-strong);
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 1.7rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .checklist,
+    .dash-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .process {
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+    }
+
+    .step-num {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #d28957);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(19, 33, 44, 0.06);
+      color: var(--accent-2);
+      font-size: 0.95rem;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .image-card {
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--card-strong);
+    }
+
+    .image-card img {
+      display: block;
+      width: 100%;
+      background: white;
+    }
+
+    .image-copy {
+      padding: 16px 18px 18px;
+    }
+
+    .equation {
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(19, 33, 44, 0.92);
+      color: #f8f1e8;
+      font-size: 1.02rem;
+      overflow-x: auto;
+    }
+
+    .decision {
+      border-left: 4px solid var(--accent);
+      padding-left: 14px;
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .footer {
+      padding: 14px 0 54px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .topbar-inner {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Team Groot</div>
+      <nav class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#dataset">Dataset</a>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#theory">Theory</a>
+        <a href="#models">Models</a>
+        <a href="#quality">Quality</a>
+        <a href="#next">Next Steps</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="shell">
+    <section class="hero" id="overview">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">AI/ML and DL Project · Team Groot</span>
+          <h1>Zero-Day Intrusion Detection for Network Traffic</h1>
+          <p class="lede">
+            This project studies how to detect both known attacks and unseen attacks in CIC-IDS-2018 traffic.
+            The core design choice is deliberate: instead of relying on a single model, the system combines
+            a supervised classifier for familiar attack behavior with an anomaly detector for novelty.
+          </p>
+          <p class="lede">
+            <strong>Project Title:</strong> Adaptive Cyber-Physical Security<br />
+            <strong>Team Members:</strong> Dally R, Pugazhendhi J
+          </p>
+          <div class="tag-row">
+            <span class="tag">Literature Review</span>
+            <span class="tag">Dataset Quality &amp; EDA</span>
+            <span class="tag">Feature Engineering</span>
+            <span class="tag">Theoretical Rigor</span>
+            <span class="tag">Model Application</span>
+            <span class="tag">Code Quality</span>
+            <span class="tag">Report + HTML Presentation</span>
+          </div>
+        </div>
+
+        <aside class="hero-panel">
+          <div>
+            <h3>Executive Summary</h3>
+            <p class="muted">
+              The repository now covers the full Phase-1 arc: cleaned data pipeline, exploratory analysis,
+              feature reduction, model scripts, generated figures, a LaTeX report, and this presentation.
+            </p>
+          </div>
+          <div class="stat-grid">
+            <div class="stat">
+              <strong>2.09M</strong>
+              processed flows
+            </div>
+            <div class="stat">
+              <strong>52</strong>
+              columns after cleaning
+            </div>
+            <div class="stat">
+              <strong>44.0%</strong>
+              RF accuracy
+            </div>
+            <div class="stat">
+              <strong>14.5%</strong>
+              OCSVM zero-day recall
+            </div>
+          </div>
+          <div>
+            <h3>Core Question</h3>
+            <p class="muted">
+              Can a lightweight, well-structured pipeline detect attack traffic even when some attack types are
+              withheld from supervised training?
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <main class="sections">
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-index">01 / Problem Framing</div>
+            <h2>Why This Project Exists</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="mini-card">
+            <h3>Security Problem</h3>
+            <p>
+              Traditional intrusion detection often assumes the future looks like the training set.
+              That assumption is weak in practice because adversaries change tactics.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Research Goal</h3>
+            <p>
+              Build a workflow that supports both closed-world classification and open-world anomaly detection
+              on the same network-flow dataset.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Design Choice</h3>
+            <p>
+              Use Random Forest for known threats and One-Class SVM for novelty detection, then compare the roles
+              each model plays in a realistic zero-day setting.
+            </p>
+          </div>
+        </div>
+        <p class="decision">
+          Decision: the project is not trying to claim a production-ready IDS. It is building a rigorous Phase-1
+          foundation with evidence, justification, and reproducible artifacts.
+        </p>
+      </section>
+
+      <section class="section" id="dataset">
+        <div class="section-head">
+          <div>
+            <div class="section-index">02 / Dataset Snapshot</div>
+            <h2>What Data We Actually Used</h2>
+          </div>
+          <p class="muted">
+            These counts come from the processed CSV currently present in the repository.
+          </p>
+        </div>
+        <div class="grid-4">
+          <div class="mini-card"><strong>2,097,149</strong><span class="muted">total rows</span></div>
+          <div class="mini-card"><strong>52</strong><span class="muted">columns after cleaning</span></div>
+          <div class="mini-card"><strong>1,209,156</strong><span class="muted">benign flows</span></div>
+          <div class="mini-card"><strong>887,993</strong><span class="muted">attack flows</span></div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px;">
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Attack Type</th>
+                  <th>Count</th>
+                  <th>Role in Project</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Benign</td>
+                  <td>1,209,156</td>
+                  <td>Normal traffic reference class</td>
+                </tr>
+                <tr>
+                  <td>DoS attacks-Hulk</td>
+                  <td>461,912</td>
+                  <td>Seen attack for supervised training</td>
+                </tr>
+                <tr>
+                  <td>Bot</td>
+                  <td>286,191</td>
+                  <td>Unseen attack for zero-day evaluation</td>
+                </tr>
+                <tr>
+                  <td>DoS attacks-SlowHTTPTest</td>
+                  <td>139,890</td>
+                  <td>Unseen attack for zero-day evaluation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="quote-card">
+            <h3>Important Scope Note</h3>
+            <p>
+              The raw directory contains multiple CIC-IDS-2018 CSV files, but the report and presentation are written
+              against the processed artifact and outputs that already exist in the repository. That keeps the story
+              honest and reproducible.
+            </p>
+            <p class="muted">
+              This matters because a submission should describe what was actually generated and verified, not what could
+              be generated later.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-index">03 / Dataset Quality and EDA</div>
+            <h2>What the Data Looks Like Before Modeling</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="mini-card">
+            <h3>Imbalance</h3>
+            <p>
+              Benign traffic is dominant, and attack categories are not evenly distributed. This affects both training
+              behavior and interpretation of aggregate metrics.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Noise and Artifacts</h3>
+            <p>
+              Raw flow data contains identifier columns, infinite values, missing values, and at least one stray
+              header-like row labeled <code>label</code>.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Redundancy</h3>
+            <p>
+              Many numeric flow statistics are strongly correlated, especially around packet lengths, rates,
+              and inter-arrival timing.
+            </p>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-top: 18px;">
+          <div class="image-card">
+            <img src="../outputs/plots/eda/label_distribution.png" alt="Label distribution" />
+            <div class="image-copy">
+              <h3>Label Distribution</h3>
+              <p class="muted">
+                Confirms class imbalance and motivates careful interpretation of model performance.
+              </p>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="../outputs/plots/eda/feature_histograms.png" alt="Feature histograms" />
+            <div class="image-copy">
+              <h3>Feature Histograms</h3>
+              <p class="muted">
+                Heavy tails and large scale differences justify numeric cleaning and model-specific preprocessing.
+              </p>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="../outputs/plots/eda/correlation_heatmap.png" alt="Correlation heatmap" />
+            <div class="image-copy">
+              <h3>Correlation Heatmap</h3>
+              <p class="muted">
+                Shows why feature reduction is not optional if we want a cleaner and more defensible feature set.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="pipeline">
+        <div class="section-head">
+          <div>
+            <div class="section-index">04 / Pipeline Design</div>
+            <h2>From Raw Network Flows to Modeling-Ready Features</h2>
+          </div>
+        </div>
+        <div class="process">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <h3>Schema Cleanup</h3>
+              <p>
+                Drop flow identifiers and endpoint metadata such as <code>Flow ID</code>, source IP, destination IP,
+                and timestamps because they are either non-generalizable or leakage-prone.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <h3>Numeric Normalization</h3>
+              <p>
+                Convert non-label columns to numeric form, replace infinite values, and handle missingness so the data
+                is stable for both tree models and kernel methods.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <h3>Information Filtering</h3>
+              <p>
+                Remove constant columns and strip the stray <code>label</code> artifact before building
+                <code>BinaryLabel</code> and <code>AttackType</code>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <h3>Redundancy Reduction</h3>
+              <p>
+                Drop highly correlated features above 0.98 using simple domain heuristics so the retained space is more
+                compact and less repetitive.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px;">
+          <div class="image-card">
+            <img src="../outputs/plots/feature_engineering/clean_feature_histograms.png" alt="Clean feature histograms" />
+            <div class="image-copy">
+              <h3>After Feature Engineering</h3>
+              <p class="muted">
+                The engineered space is cleaner and more consistent with downstream model assumptions.
+              </p>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="../outputs/plots/feature_engineering/clean_correlation_heatmap.png" alt="Clean correlation heatmap" />
+            <div class="image-copy">
+              <h3>Reduced Correlation Structure</h3>
+              <p class="muted">
+                This is the point of the feature engineering stage: preserve signal while cutting obvious redundancy.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="theory">
+        <div class="section-head">
+          <div>
+            <div class="section-index">05 / Theoretical Rigor</div>
+            <h2>Why These Models Make Sense</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="quote-card">
+            <h3>Random Forest</h3>
+            <p>
+              Random Forest aggregates many decision trees built on bootstrap samples and random feature subsets.
+              It is strong on tabular data because it handles nonlinear interactions and is fairly robust to
+              heterogeneous feature distributions.
+            </p>
+            <div class="equation">
+              y^(x) = mode { T_b(x) } for b = 1 to B
+            </div>
+            <p class="muted">
+              In this project, it plays the role of the supervised known-threat detector.
+            </p>
+          </div>
+          <div class="quote-card">
+            <h3>One-Class SVM</h3>
+            <p>
+              One-Class SVM estimates the support of benign traffic in a high-dimensional feature space.
+              Anything outside that learned region is treated as anomalous.
+            </p>
+            <div class="equation">
+              min (1/2)||w||^2 + (1/(nu n)) sum xi_i - rho
+              <br />
+              subject to: w · phi(x_i) >= rho - xi_i
+            </div>
+            <p class="muted">
+              In this project, it plays the role of the novelty detector for zero-day attacks.
+            </p>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-top: 18px;">
+          <div class="mini-card">
+            <h3>Closed-World Strength</h3>
+            <p>Random Forest is a good choice when attack labels exist and the future resembles the training distribution.</p>
+          </div>
+          <div class="mini-card">
+            <h3>Open-World Strength</h3>
+            <p>One-Class SVM is useful when malicious behavior cannot be completely enumerated ahead of time.</p>
+          </div>
+          <div class="mini-card">
+            <h3>Evaluation Implication</h3>
+            <p>
+              Standard metrics alone are not enough. Zero-day recall matters because a model can look good overall
+              while still failing on unseen attacks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="models">
+        <div class="section-head">
+          <div>
+            <div class="section-index">06 / Model Application</div>
+            <h2>How the Two Evaluation Paths Were Designed</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h3>Random Forest Split Logic</h3>
+            <ul class="checklist">
+              <li>Benign traffic is divided into train and test sets.</li>
+              <li><code>DoS attacks-Hulk</code> is treated as the seen attack available for training.</li>
+              <li><code>Bot</code> and <code>DoS attacks-SlowHTTPTest</code> are withheld as unseen attacks.</li>
+              <li>Zero-day recall is computed on the withheld attack subset.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>One-Class SVM Logic</h3>
+            <ul class="checklist">
+              <li>Train only on benign traffic.</li>
+              <li>Hold out benign samples for testing.</li>
+              <li>Evaluate against all attack samples at test time.</li>
+              <li>Treat every malicious example as zero-day from the model's point of view.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px;">
+          <div class="image-card">
+            <img src="../outputs/plots/models/rf_confusion_matrix.png" alt="Random Forest confusion matrix" />
+            <div class="image-copy">
+              <h3>Random Forest Output</h3>
+              <p class="muted">
+                Best interpreted as the known-threat baseline. It should benefit from labeled attack structure,
+                but its zero-day behavior is the real question.
+              </p>
+            </div>
+          </div>
+          <div class="image-card">
+            <img src="../outputs/plots/models/ocsvm_confusion_matrix.png" alt="One-Class SVM confusion matrix" />
+            <div class="image-copy">
+              <h3>One-Class SVM Output</h3>
+              <p class="muted">
+                Best interpreted as the novelty detector. It usually pays for broader detection sensitivity with
+                a more difficult precision tradeoff.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 18px;">
+          <div class="quote-card">
+            <h3>Recorded Random Forest Metrics</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Accuracy</td><td>0.4396</td></tr>
+                <tr><td>Precision</td><td>1.0000</td></tr>
+                <tr><td>Recall</td><td>0.1782</td></tr>
+                <tr><td>F1-score</td><td>0.3025</td></tr>
+                <tr><td>Zero-Day Recall</td><td>0.0000</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="quote-card">
+            <h3>Recorded One-Class SVM Metrics</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Precision</td><td>0.9073</td></tr>
+                <tr><td>Recall</td><td>0.1445</td></tr>
+                <tr><td>F1-score</td><td>0.2493</td></tr>
+                <tr><td>Zero-Day Recall</td><td>0.1445</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="grid-3" style="margin-top: 18px;">
+          <div class="mini-card">
+            <h3>What RF Tells Us</h3>
+            <p>
+              Random Forest achieved perfect precision but zero zero-day recall. That means it was extremely selective
+              and failed to catch unseen attack categories under this evaluation split.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>What OCSVM Tells Us</h3>
+            <p>
+              One-Class SVM delivered lower recall overall, but it did detect a portion of unseen attacks. That is
+              exactly why anomaly-based modeling is relevant to zero-day security.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Main Takeaway</h3>
+            <p>
+              The better zero-day story in this project comes from model complementarity, not from a single metric win.
+              Supervised accuracy alone is not enough.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-index">07 / Main Findings</div>
+            <h2>What This Project Demonstrates</h2>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="mini-card">
+            <h3>Finding 1</h3>
+            <p>
+              The dataset requires real preprocessing. Without cleaning, missing-value handling, artifact removal,
+              and correlation pruning, the pipeline is not reliable.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Finding 2</h3>
+            <p>
+              Zero-day framing changes the evaluation story. The recorded Random Forest run had perfect precision but
+              zero zero-day recall, proving that a conventional classifier is not automatically strong under novelty conditions.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Finding 3</h3>
+            <p>
+              The One-Class SVM only reached 0.1445 zero-day recall, but that is still materially better than zero.
+              The combination of supervised and anomaly-based models tells a more realistic cyber-defense story than either one alone.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="quality">
+        <div class="section-head">
+          <div>
+            <div class="section-index">08 / Repository and Code Quality</div>
+            <h2>Why the Submission Is Defensible</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>What Is Present</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Preprocessing</td>
+                  <td>Dedicated scripts for lightweight cleaning and full raw-to-processed transformation</td>
+                </tr>
+                <tr>
+                  <td>Analysis</td>
+                  <td>EDA and feature engineering notebooks plus generated plots</td>
+                </tr>
+                <tr>
+                  <td>Modeling</td>
+                  <td>Standalone Random Forest and One-Class SVM training scripts</td>
+                </tr>
+                <tr>
+                  <td>Documentation</td>
+                  <td>README, LaTeX report, bibliography, and HTML presentation</td>
+                </tr>
+                <tr>
+                  <td>Robustness</td>
+                  <td>Improved path handling, dataset validation, and safer environment behavior</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="quote-card">
+            <h3>Code Quality Improvements Already Made</h3>
+            <ul class="dash-list">
+              <li>Removed fragile working-directory assumptions with root-relative paths.</li>
+              <li>Added explicit checks for missing processed datasets.</li>
+              <li>Removed the stray <code>label</code> row safely in preprocessing-aware flows.</li>
+              <li>Prevented One-Class SVM crashes on smaller benign subsets.</li>
+              <li>Hardened plotting environment setup for restricted execution contexts.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="next">
+        <div class="section-head">
+          <div>
+            <div class="section-index">09 / Limitations and Next Steps</div>
+            <h2>What Still Needs to Improve</h2>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h3>Current Limitations</h3>
+            <ul class="checklist">
+              <li>The processed artifact in the repo reflects the validated data product already present, not the full possible raw ingestion.</li>
+              <li>Feature engineering is heuristic and correlation-driven rather than importance-optimized.</li>
+              <li>There is no consolidated metrics table saved into the repo yet.</li>
+              <li>Hyperparameter tuning and repeated evaluation are still limited.</li>
+              <li>The current Random Forest configuration does not generalize to unseen attacks in this split.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Best Next Iteration</h3>
+            <ul class="checklist">
+              <li>Regenerate the processed dataset from the full raw archive in one controlled run.</li>
+              <li>Persist model metrics to CSV or JSON for direct inclusion in the report.</li>
+              <li>Add threshold analysis for anomaly detection.</li>
+              <li>Add a thin orchestration layer so preprocessing, analysis, and training are easier to reproduce.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <div class="section-index">10 / Closing</div>
+            <h2>Final Takeaway</h2>
+          </div>
+        </div>
+        <div class="quote-card">
+          <p>
+            The strongest idea in this project is not any one algorithm. It is the evaluation stance:
+            intrusion detection should be judged not only on how well it recognizes known attacks, but also on
+            how it behaves when the attack taxonomy changes. That is why the hybrid setup matters.
+          </p>
+          <p>
+            In this project, the recorded results support that claim directly: the supervised model produced
+            stronger conventional precision, while the anomaly detector produced the only non-zero zero-day recall.
+          </p>
+          <p class="muted">
+            Supporting files: <code>report/latex/main.tex</code> and <code>presentation/index.html</code>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer">
+      Team Groot · Adaptive Cyber-Physical Security · Phase-1 HTML Presentation
+    </div>
+  </div>
+</body>
+</html>
