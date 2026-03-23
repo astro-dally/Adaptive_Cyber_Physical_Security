@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Cyber-Physical Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255,255,255,0.04);
+            --accent-cyan: #00e5ff;
+            --accent-purple: #b388ff;
+            --accent-pink: #ff6bca;
+            --accent-green: #69f0ae;
+            --accent-orange: #ffab40;
+            --text-primary: #e8eaf6;
+            --text-secondary: rgba(232,234,246,0.6);
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,255,255,0.1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* ─── Ambient Animated Background ─── */
+        .bg-orbs {
+            position: fixed; inset: 0; z-index: 0;
+            pointer-events: none; overflow: hidden;
+        }
+        .bg-orbs span {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.18;
+            animation: orbFloat 18s ease-in-out infinite alternate;
+        }
+        .bg-orbs span:nth-child(1) {
+            width: 600px; height: 600px;
+            background: var(--accent-cyan);
+            top: -10%; left: -8%;
+            animation-delay: 0s;
+        }
+        .bg-orbs span:nth-child(2) {
+            width: 500px; height: 500px;
+            background: var(--accent-purple);
+            bottom: -10%; right: -5%;
+            animation-delay: -6s;
+        }
+        .bg-orbs span:nth-child(3) {
+            width: 450px; height: 450px;
+            background: var(--accent-pink);
+            top: 40%; left: 50%;
+            animation-delay: -12s;
+        }
+        @keyframes orbFloat {
+            0%   { transform: translate(0, 0) scale(1); }
+            50%  { transform: translate(60px, -40px) scale(1.15); }
+            100% { transform: translate(-30px, 50px) scale(0.95); }
+        }
+
+        /* ─── Navigation Dots ─── */
+        .nav-dots {
+            position: fixed; right: 28px; top: 50%;
+            transform: translateY(-50%);
+            z-index: 100; display: flex; flex-direction: column; gap: 14px;
+        }
+        .nav-dots a {
+            width: 12px; height: 12px; border-radius: 50%;
+            border: 2px solid var(--glass-border);
+            background: transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-dots a:hover,
+        .nav-dots a.active {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-cyan);
+        }
+        .nav-dots a .tooltip {
+            position: absolute; right: 24px; top: 50%;
+            transform: translateY(-50%); padding: 5px 12px;
+            background: rgba(0,0,0,0.85); border-radius: 6px;
+            font-size: 0.7rem; white-space: nowrap;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .nav-dots a:hover .tooltip { opacity: 1; }
+
+        /* ─── Slide Base ─── */
+        .slide {
+            min-height: 100vh; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 1;
+            padding: 80px 60px;
+        }
+        .slide-inner {
+            max-width: 1100px; width: 100%;
+        }
+
+        /* ─── Slide Number Badge ─── */
+        .slide-number {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        .slide-number::before {
+            content: ''; width: 28px; height: 1px;
+            background: var(--accent-cyan);
+        }
+
+        /* ─── Typography ─── */
+        h1 {
+            font-size: clamp(2.8rem, 5vw, 4.5rem);
+            font-weight: 800; line-height: 1.1;
+            letter-spacing: -1.5px;
+        }
+        h2 {
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-weight: 700; line-height: 1.15;
+            letter-spacing: -1px; margin-bottom: 32px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-pink {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-orange));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-green {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        p.lead {
+            font-size: 1.15rem; line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 680px;
+        }
+
+        /* ─── Glass Cards ─── */
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 28px 32px;
+            backdrop-filter: blur(16px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,229,255,0.08);
+        }
+        .card-grid { display: grid; gap: 20px; }
+        .card-grid-2 { grid-template-columns: 1fr 1fr; }
+        .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+        .card-icon {
+            font-size: 1.6rem; margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 1.05rem; font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .card-desc {
+            font-size: 0.88rem; color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ─── Tags / Chips ─── */
+        .chip {
+            display: inline-block; padding: 5px 14px;
+            border-radius: 999px; font-size: 0.75rem;
+            font-weight: 600; letter-spacing: 0.5px;
+            margin: 4px 4px 0 0;
+        }
+        .chip-cyan  { background: rgba(0,229,255,0.12); color: var(--accent-cyan); }
+        .chip-purple { background: rgba(179,136,255,0.12); color: var(--accent-purple); }
+        .chip-pink  { background: rgba(255,107,202,0.12); color: var(--accent-pink); }
+        .chip-green { background: rgba(105,240,174,0.12); color: var(--accent-green); }
+        .chip-orange { background: rgba(255,171,64,0.12); color: var(--accent-orange); }
+
+        /* ─── Images ─── */
+        .plot-img {
+            width: 100%; border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s;
+        }
+        .plot-img:hover { transform: scale(1.02); }
+
+        .img-caption {
+            font-size: 0.78rem; color: var(--text-secondary);
+            margin-top: 8px; text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ─── Comparison Table ─── */
+        .compare-table {
+            width: 100%; border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .compare-table th, .compare-table td {
+            padding: 14px 20px; text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .compare-table th {
+            font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--text-secondary);
+        }
+        .compare-table td {
+            font-size: 0.9rem;
+        }
+        .compare-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* ─── Timeline ─── */
+        .timeline { position: relative; padding-left: 32px; }
+        .timeline::before {
+            content: ''; position: absolute; left: 8px;
+            top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative; margin-bottom: 32px;
+        }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -28px; top: 6px;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 12px var(--accent-cyan);
+        }
+        .timeline-item h4 {
+            font-size: 1rem; font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .timeline-item p {
+            font-size: 0.88rem; color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ─── Stat Pill ─── */
+        .stat-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 28px; }
+        .stat-pill {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 16px 24px;
+            text-align: center; flex: 1; min-width: 130px;
+        }
+        .stat-pill .stat-val {
+            font-size: 1.8rem; font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .stat-pill .stat-label {
+            font-size: 0.72rem; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* ─── Hero CTA ─── */
+        .hero-sub {
+            margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;
+        }
+        .hero-sub .chip { font-size: 0.82rem; padding: 8px 18px; }
+
+        /* ─── Footer ─── */
+        .footer {
+            text-align: center; padding: 48px 24px;
+            font-size: 0.78rem; color: var(--text-secondary);
+            border-top: 1px solid var(--glass-border);
+            position: relative; z-index: 1;
+        }
+
+        /* ─── Scroll-reveal ─── */
+        .reveal {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible {
+            opacity: 1; transform: translateY(0);
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .slide { padding: 60px 24px; }
+            .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+            .nav-dots { right: 12px; gap: 10px; }
+            .nav-dots a .tooltip { display: none; }
+            .stat-row { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient Orbs -->
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+
+<!-- Navigation Dots -->
+<nav class="nav-dots" id="navDots">
+    <a href="#slide-1"><span class="tooltip">Problem</span></a>
+    <a href="#slide-2"><span class="tooltip">Dataset</span></a>
+    <a href="#slide-3"><span class="tooltip">Literature</span></a>
+    <a href="#slide-4"><span class="tooltip">EDA</span></a>
+    <a href="#slide-5"><span class="tooltip">Features</span></a>
+    <a href="#slide-6"><span class="tooltip">Models</span></a>
+    <a href="#slide-7"><span class="tooltip">Training</span></a>
+    <a href="#slide-8"><span class="tooltip">Results</span></a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 1 — THE PROBLEM
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-1">
+    <div class="slide-inner reveal">
+        <div class="slide-number">01 &mdash; The Problem</div>
+        <h1>
+            Cyber-physical systems<br>
+            can't detect what they've<br>
+            <span class="gradient-text">never seen before.</span>
+        </h1>
+        <p class="lead" style="margin-top: 24px;">
+            Traditional intrusion detection relies on known attack signatures.
+            When a new, never-before-seen threat appears — a <strong>zero-day attack</strong> — these systems go silent.
+        </p>
+        <div class="hero-sub">
+            <span class="chip chip-pink">Zero-Day Blindness</span>
+            <span class="chip chip-cyan">Open-World Threat</span>
+            <span class="chip chip-purple">Evolving Adversaries</span>
+        </div>
+
+        <div class="card-grid card-grid-3" style="margin-top: 48px;">
+            <div class="glass-card">
+                <div class="card-icon">🔒</div>
+                <div class="card-title">Signature-Based IDS</div>
+                <div class="card-desc">Matches known fingerprints. Fast and precise, but completely blind to novel attacks.</div>
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Anomaly-Based IDS</div>
+                <div class="card-desc">Learns "normal" behavior. Can theoretically detect zero-days, but floods analysts with false positives.</div>
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">🎯</div>
+                <div class="card-title">Our Goal</div>
+                <div class="card-desc">Combine supervised classification with anomaly detection for adaptive, zero-day-aware security.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 2 — DATASET CHOICE
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-2">
+    <div class="slide-inner reveal">
+        <div class="slide-number">02 &mdash; Why CIC-IDS-2018</div>
+        <h2>The old datasets are <span class="gradient-pink">holding us back.</span></h2>
+        <p class="lead">
+            NSL-KDD is the most-used benchmark in intrusion detection research.
+            But it's from <strong>1999</strong> — it misses modern attacks, modern traffic patterns, and modern network topologies.
+            We needed something current.
+        </p>
+
+        <table class="compare-table" style="margin-top: 36px;">
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <th>NSL-KDD (1999)</th>
+                    <th>CIC-IDS-2018 ✓</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Attack Types</td>
+                    <td>4 generic categories</td>
+                    <td><strong>14+ realistic attack families</strong></td>
+                </tr>
+                <tr>
+                    <td>Traffic Realism</td>
+                    <td>Simulated lab traffic</td>
+                    <td><strong>Real-world profiled flows</strong></td>
+                </tr>
+                <tr>
+                    <td>Scale</td>
+                    <td>~125K records</td>
+                    <td><strong>8.2M+ flow records</strong></td>
+                </tr>
+                <tr>
+                    <td>Modern Attacks</td>
+                    <td>No DDoS, no botnets</td>
+                    <td><strong>DDoS, Botnets, Brute-Force, Web Attacks</strong></td>
+                </tr>
+                <tr>
+                    <td>Community Consensus</td>
+                    <td>Outdated benchmark</td>
+                    <td><strong>Gold standard for ML-based IDS</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="stat-row">
+            <div class="stat-pill">
+                <div class="stat-val gradient-text">8.2M</div>
+                <div class="stat-label">Flow Records</div>
+            </div>
+            <div class="stat-pill">
+                <div class="stat-val gradient-text">14</div>
+                <div class="stat-label">Attack Types</div>
+            </div>
+            <div class="stat-pill">
+                <div class="stat-val gradient-text">52</div>
+                <div class="stat-label">Features</div>
+            </div>
+            <div class="stat-pill">
+                <div class="stat-val gradient-text">2018</div>
+                <div class="stat-label">Year Released</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 3 — LITERATURE REVIEW
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-3">
+    <div class="slide-inner reveal">
+        <div class="slide-number">03 &mdash; Literature Review</div>
+        <h2>What the research tells us — <br><span class="gradient-green">and where the gap is.</span></h2>
+
+        <div class="timeline" style="margin-top: 40px;">
+            <div class="timeline-item">
+                <h4>IDS Evolution</h4>
+                <p>From static firewalls to continuous monitoring. Early systems were built for enterprise LANs — modern CPS spans cloud, IoT, and industrial control.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>ML in Cybersecurity</h4>
+                <p>Supervised models like Random Forest achieve near-perfect accuracy on known attacks. But "known" is the key word — they memorize, not generalize.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Anomaly Detection</h4>
+                <p>One-Class SVMs and autoencoders frame detection as boundary estimation. They don't need attack labels — just a model of what "normal" looks like.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>⚠️ The Gap</h4>
+                <p>Most papers evaluate on random train/test splits — leaking future attack knowledge into training. When models face true zero-day threats, recall collapses.</p>
+            </div>
+            <div class="timeline-item">
+                <h4>Our Contribution</h4>
+                <p>A dual-model framework that explicitly tests for zero-day scenarios: supervised classification for known threats, anomaly detection for novel ones.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 4 — EDA
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-4">
+    <div class="slide-inner reveal">
+        <div class="slide-number">04 &mdash; Exploratory Data Analysis</div>
+        <h2>Seeing the data <span class="gradient-text">clearly.</span></h2>
+        <p class="lead" style="margin-bottom: 36px;">
+            8.2 million network flows — 74% benign, 26% attacks across 14 categories.
+            Here's what the data looks like before any engineering.
+        </p>
+
+        <div class="card-grid card-grid-2">
+            <div class="glass-card" style="padding: 16px;">
+                <img src="../outputs/plots/eda/label_distribution.png" alt="Label Distribution" class="plot-img">
+                <div class="img-caption">Binary Label Distribution — Benign vs Attack</div>
+            </div>
+            <div class="glass-card" style="padding: 16px;">
+                <img src="../outputs/plots/eda/correlation_heatmap.png" alt="Correlation Heatmap" class="plot-img">
+                <div class="img-caption">Feature Correlation Heatmap — Identifying Redundancy</div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 20px; padding: 16px;">
+            <img src="../outputs/plots/eda/feature_histograms.png" alt="Feature Histograms" class="plot-img">
+            <div class="img-caption">Feature Distribution Histograms — Skewness &amp; Outliers</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 5 — FEATURE ENGINEERING
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-5">
+    <div class="slide-inner reveal">
+        <div class="slide-number">05 &mdash; Feature Engineering</div>
+        <h2>Cleaning the signal from <span class="gradient-pink">the noise.</span></h2>
+
+        <div class="card-grid card-grid-3" style="margin-bottom: 32px;">
+            <div class="glass-card">
+                <div class="card-icon">🗑️</div>
+                <div class="card-title">Drop Identifiers</div>
+                <div class="card-desc">Removed Flow ID, IPs, Timestamp — prevents the model from memorizing network topology.</div>
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">♻️</div>
+                <div class="card-title">Remove Constants</div>
+                <div class="card-desc">Dropped zero-variance columns that carry no information for classification.</div>
+            </div>
+            <div class="glass-card">
+                <div class="card-icon">📐</div>
+                <div class="card-title">Correlation Pruning</div>
+                <div class="card-desc">Removed features with &gt;0.98 correlation to reduce redundancy and stabilize models.</div>
+            </div>
+        </div>
+
+        <div class="card-grid card-grid-2">
+            <div class="glass-card" style="padding: 16px;">
+                <img src="../outputs/plots/feature_engineering/clean_correlation_heatmap.png" alt="Clean Correlation Heatmap" class="plot-img">
+                <div class="img-caption">Post-Engineering Correlation — Much Less Redundancy</div>
+            </div>
+            <div class="glass-card" style="padding: 16px;">
+                <img src="../outputs/plots/feature_engineering/clean_feature_histograms.png" alt="Clean Feature Histograms" class="plot-img">
+                <div class="img-caption">Cleaned Feature Distributions — Ready for Modeling</div>
+            </div>
+        </div>
+
+        <div class="stat-row">
+            <div class="stat-pill">
+                <div class="stat-val gradient-pink">80→49</div>
+                <div class="stat-label">Features Reduced</div>
+            </div>
+            <div class="stat-pill">
+                <div class="stat-val gradient-pink">0.98</div>
+                <div class="stat-label">Correlation Threshold</div>
+            </div>
+            <div class="stat-pill">
+                <div class="stat-val gradient-pink">0</div>
+                <div class="stat-label">Inf/NaN Remaining</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 6 — MODEL SELECTION
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-6">
+    <div class="slide-inner reveal">
+        <div class="slide-number">06 &mdash; Model Selection</div>
+        <h2>Two models, <span class="gradient-green">two roles.</span></h2>
+        <p class="lead" style="margin-bottom: 36px;">
+            Cyber defense is an open-world problem. One model can't do it all.
+            We chose two complementary approaches — one for known threats, one for the unknown.
+        </p>
+
+        <div class="card-grid card-grid-2">
+            <div class="glass-card" style="border-left: 3px solid var(--accent-cyan);">
+                <div class="card-icon">🌲</div>
+                <div class="card-title" style="font-size: 1.2rem;">Random Forest</div>
+                <div class="card-desc" style="margin-bottom: 16px;">
+                    <strong>Role:</strong> Supervised classification of known attack labels.
+                </div>
+                <div class="card-desc">
+                    <strong>Why:</strong> Handles nonlinear boundaries in tabular data. Robust to correlated features. No scaling needed. Ensemble of 100 trees with majority voting.
+                </div>
+                <div style="margin-top: 16px;">
+                    <span class="chip chip-cyan">Supervised</span>
+                    <span class="chip chip-cyan">100 Trees</span>
+                    <span class="chip chip-cyan">Known Attacks</span>
+                </div>
+            </div>
+            <div class="glass-card" style="border-left: 3px solid var(--accent-orange);">
+                <div class="card-icon">🔮</div>
+                <div class="card-title" style="font-size: 1.2rem;">One-Class SVM</div>
+                <div class="card-desc" style="margin-bottom: 16px;">
+                    <strong>Role:</strong> Anomaly detection — trained on benign traffic only.
+                </div>
+                <div class="card-desc">
+                    <strong>Why:</strong> Learns the boundary of "normal." Anything outside is flagged as anomalous. Doesn't need attack labels — ideal for zero-day detection.
+                </div>
+                <div style="margin-top: 16px;">
+                    <span class="chip chip-orange">Semi-Supervised</span>
+                    <span class="chip chip-orange">RBF Kernel</span>
+                    <span class="chip chip-orange">Zero-Day</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 24px; text-align: center; padding: 20px;">
+            <div class="card-desc" style="font-size: 0.9rem;">
+                💡 <em>This dual-model approach is supported by recent literature — combining discriminative classifiers with anomaly detectors provides both precision on known threats and resilience to novel attacks.</em>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 7 — TRAINING & TESTING
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-7">
+    <div class="slide-inner reveal">
+        <div class="slide-number">07 &mdash; Training &amp; Testing</div>
+        <h2>The zero-day <span class="gradient-text">evaluation framework.</span></h2>
+
+        <div class="card-grid card-grid-2" style="margin-top: 36px;">
+            <div class="glass-card">
+                <div class="card-title" style="color: var(--accent-cyan); font-size: 1.1rem;">Random Forest Split</div>
+                <table class="compare-table" style="margin-top: 8px;">
+                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TRAINING</td><td>Benign + <span class="chip chip-green" style="font-size: 0.7rem;">DoS-Hulk</span></td></tr>
+                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING (seen)</td><td>Held-out Benign + DoS-Hulk</td></tr>
+                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING (zero-day)</td><td><span class="chip chip-pink" style="font-size: 0.7rem;">Bot</span> <span class="chip chip-pink" style="font-size: 0.7rem;">SlowHTTPTest</span></td></tr>
+                </table>
+                <div class="card-desc" style="margin-top: 12px;">
+                    Attack types withheld from training to simulate a real zero-day scenario. 80/20 stratified split. <code style="color:var(--accent-cyan); font-size:0.82rem;">random_state=42</code>
+                </div>
+            </div>
+            <div class="glass-card">
+                <div class="card-title" style="color: var(--accent-orange); font-size: 1.1rem;">One-Class SVM Split</div>
+                <table class="compare-table" style="margin-top: 8px;">
+                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TRAINING</td><td>Benign only <span class="chip chip-green" style="font-size: 0.7rem;">20K samples</span></td></tr>
+                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING</td><td>Held-out Benign + <strong>ALL</strong> attacks</td></tr>
+                </table>
+                <div class="card-desc" style="margin-top: 12px;">
+                    All attacks are zero-day by design — the model has never seen any malicious traffic. StandardScaler applied before fitting.
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 24px;">
+            <div class="card-title">Evaluation Metrics</div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+                <span class="chip chip-cyan">Accuracy</span>
+                <span class="chip chip-purple">Precision</span>
+                <span class="chip chip-green">Recall</span>
+                <span class="chip chip-orange">F1-Score</span>
+                <span class="chip chip-pink">Zero-Day Recall ⭐</span>
+            </div>
+            <div class="card-desc" style="margin-top: 12px;">
+                <strong>Zero-Day Recall</strong> = True positives on unseen attacks ÷ All unseen attacks.
+                The most critical metric — a model can score 99% accuracy while missing every zero-day.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 8 — RESULTS
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-8">
+    <div class="slide-inner reveal">
+        <div class="slide-number">08 &mdash; Results</div>
+        <h2>What the models <span class="gradient-pink">revealed.</span></h2>
+        <p class="lead" style="margin-bottom: 36px;">
+            Random Forest dominates known attacks. One-Class SVM catches what it can't.
+            Neither alone is sufficient — together, they form an adaptive defense.
+        </p>
+
+        <div class="card-grid card-grid-2">
+            <div class="glass-card" style="padding: 16px;">
+                <div class="card-title" style="text-align: center; margin-bottom: 12px; color: var(--accent-cyan);">Random Forest</div>
+                <img src="../outputs/plots/models/rf_confusion_matrix.png" alt="RF Confusion Matrix" class="plot-img">
+                <div class="img-caption">RF Confusion Matrix — Strong on Known Attacks</div>
+            </div>
+            <div class="glass-card" style="padding: 16px;">
+                <div class="card-title" style="text-align: center; margin-bottom: 12px; color: var(--accent-orange);">One-Class SVM</div>
+                <img src="../outputs/plots/models/ocsvm_confusion_matrix.png" alt="OCSVM Confusion Matrix" class="plot-img">
+                <div class="img-caption">OCSVM Confusion Matrix — Zero-Day Detection</div>
+            </div>
+        </div>
+
+        <div class="card-grid card-grid-2" style="margin-top: 24px;">
+            <div class="glass-card" style="border-left: 3px solid var(--accent-cyan);">
+                <div class="card-title" style="color: var(--accent-cyan);">Random Forest Takeaway</div>
+                <div class="card-desc">
+                    Near-perfect precision and recall on seen attack types (DoS-Hulk). But conservative on zero-day attacks — tends to classify novel threats as benign because it has never learned their patterns.
+                </div>
+            </div>
+            <div class="glass-card" style="border-left: 3px solid var(--accent-orange);">
+                <div class="card-title" style="color: var(--accent-orange);">One-Class SVM Takeaway</div>
+                <div class="card-desc">
+                    Catches anomalous behavior from novel attack families without ever seeing attack data in training. Trade-off: higher false positive rate on benign traffic, but recovers true zero-days that RF misses entirely.
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 24px; text-align: center; padding: 24px; background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(179,136,255,0.06));">
+            <h2 style="font-size: 1.3rem; margin-bottom: 12px;">
+                🛡️ <span class="gradient-text">Key Insight</span>
+            </h2>
+            <div class="card-desc" style="max-width: 680px; margin: 0 auto; font-size: 0.95rem;">
+                Known-attack recognition and zero-day detection are fundamentally <strong>different tasks</strong>.
+                Adaptive cyber-physical defense needs <strong>both</strong> — a classifier for what you know,
+                and an anomaly detector for what you don't.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+    Adaptive Cyber-Physical Security &nbsp;·&nbsp; CIC-IDS-2018 &nbsp;·&nbsp; Phase 1
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS
+     ═══════════════════════════════════════════════════ -->
+<script>
+    // ─── Scroll Reveal ───
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => observer.observe(el));
+
+    // ─── Active Nav Dot ───
+    const dots = document.querySelectorAll('.nav-dots a');
+    const slides = document.querySelectorAll('.slide');
+    const slideObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                dots.forEach(d => d.classList.remove('active'));
+                const idx = [...slides].indexOf(e.target);
+                if (dots[idx]) dots[idx].classList.add('active');
+            }
+        });
+    }, { threshold: 0.4 });
+    slides.forEach(s => slideObserver.observe(s));
+
+    // ─── Keyboard Nav ───
+    document.addEventListener('keydown', (e) => {
+        const current = [...slides].findIndex(s => {
+            const r = s.getBoundingClientRect();
+            return r.top >= -100 && r.top <= window.innerHeight / 2;
+        });
+        if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            const next = Math.min(current + 1, slides.length - 1);
+            slides[next].scrollIntoView({ behavior: 'smooth' });
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prev = Math.max(current - 1, 0);
+            slides[prev].scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+</script>
+</body>
+</html>
