@@ -4,3 +4,4 @@ data/
 *.parquet
 **pycache**/
 .ipynb_checkpoints/
+.DS_Store
