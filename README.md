@@ -13,7 +13,8 @@ Adaptive network intrusion detection system using the **CIC-IDS-2018** dataset, 
 │   ├── feature_engineering/   # Feature selection & engineering notebook
 │   └── models/                # Model training & evaluation scripts
 │       ├── rf_model.py        # Random Forest (supervised zero-day split)
-│       └── ocsvm_model.py     # One-Class SVM (anomaly-based zero-day)
+│       ├── ocsvm_model.py     # One-Class SVM (anomaly-based zero-day)
+│       └── hybrid_model.py    # Hybrid Model (RF + OCSVM for adaptive defense)
 ├── data/
 │   ├── raw/                   # Raw CIC-IDS-2018 daily CSV files
 │   ├── interim/               # Intermediate data (if needed)
@@ -65,6 +66,7 @@ Feature engineering produces `data/processed/clean_features.csv`.
 ```bash
 python experiments/models/rf_model.py       # Random Forest
 python experiments/models/ocsvm_model.py    # One-Class SVM
+python experiments/models/hybrid_model.py   # Hybrid Model (RF + OCSVM)
 ```
 
 Confusion matrices are saved to `outputs/plots/models/`.
@@ -103,6 +105,7 @@ To open the presentation, load `presentation/index.html` in a browser.
 |-------|----------|---------------|-------------------|
 | **Random Forest** | Supervised | Benign + 1 seen attack | Unseen attack types withheld from training |
 | **One-Class SVM** | Anomaly detection | Benign only (20k samples) | All attacks unseen by design |
+| **Hybrid Model** | Supervised + Anomaly | RF uses labeled; OCSVM uses benign | Balances RF precision with OCSVM novelty detection |
 
 ## Dataset
 
