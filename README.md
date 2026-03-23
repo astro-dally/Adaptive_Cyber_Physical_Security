@@ -71,11 +71,19 @@ Confusion matrices are saved to `outputs/plots/models/`.
 
 ## Deliverables
 
-The repository now includes the Phase-1 written and presentation artifacts:
+The repository includes the Phase-1 written and presentation artifacts:
 
-- LaTeX report: `report/latex/main.tex`
-- Bibliography: `report/latex/references.bib`
-- HTML presentation: `presentation/index.html`
+- **Phase-1 Project Report**: [`report/Phase1_report.pdf`](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/report/Phase1_report.pdf)
+- **HTML Presentation**: [`presentation/presentation.html`](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/presentation/presentation.html)
+- **Interactive Deck**: [`presentation/index.html`](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/presentation/index.html)
+- **LaTeX Source**: `report/latex/`
+
+### Project Documentation
+Detailed project documentation can be found in the `docs/` folder:
+- [Literature Review](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/docs/literature_review.md)
+- [Data Preprocessing Plan](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/docs/data_preprocessing_plan.md)
+- [Data Dictionary](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/docs/data_dictionary.md)
+- [Theoretical Rigor](file:///Users/pugazhendhij/Desktop/Adaptive_Cyber_Physical_Security/docs/theoretical_rigor.md)
 
 To compile the report locally:
 
