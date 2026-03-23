@@ -9,88 +9,91 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg-dark: #0a0a0f;
-            --bg-card: rgba(255,255,255,0.04);
-            --accent-cyan: #00e5ff;
-            --accent-purple: #b388ff;
-            --accent-pink: #ff6bca;
-            --accent-green: #69f0ae;
-            --accent-orange: #ffab40;
-            --text-primary: #e8eaf6;
-            --text-secondary: rgba(232,234,246,0.6);
-            --glass: rgba(255,255,255,0.06);
-            --glass-border: rgba(255,255,255,0.1);
+            --bg-primary: #f8f9fc;
+            --bg-white: #ffffff;
+            --bg-soft: #f0f2f8;
+            --accent-coral: #ff6b6b;
+            --accent-indigo: #6366f1;
+            --accent-teal: #14b8a6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-sky: #0ea5e9;
+            --accent-violet: #8b5cf6;
+            --accent-emerald: #10b981;
+            --text-dark: #1e293b;
+            --text-body: #475569;
+            --text-muted: #94a3b8;
+            --border-light: rgba(0,0,0,0.06);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
         }
 
         html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            background: var(--bg-primary);
+            color: var(--text-dark);
             overflow-x: hidden;
         }
 
-        /* ─── Ambient Animated Background ─── */
-        .bg-orbs {
+        /* ─── Soft Animated Background ─── */
+        .bg-gradient {
             position: fixed; inset: 0; z-index: 0;
             pointer-events: none; overflow: hidden;
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef2ff 30%, #fdf2f8 60%, #ecfdf5 100%);
         }
-        .bg-orbs span {
+        .bg-gradient span {
             position: absolute; border-radius: 50%;
-            filter: blur(120px); opacity: 0.18;
-            animation: orbFloat 18s ease-in-out infinite alternate;
+            filter: blur(100px); opacity: 0.25;
+            animation: blobFloat 20s ease-in-out infinite alternate;
         }
-        .bg-orbs span:nth-child(1) {
-            width: 600px; height: 600px;
-            background: var(--accent-cyan);
-            top: -10%; left: -8%;
-            animation-delay: 0s;
-        }
-        .bg-orbs span:nth-child(2) {
+        .bg-gradient span:nth-child(1) {
             width: 500px; height: 500px;
-            background: var(--accent-purple);
-            bottom: -10%; right: -5%;
-            animation-delay: -6s;
+            background: linear-gradient(135deg, #c7d2fe, #a5b4fc);
+            top: -5%; left: -5%; animation-delay: 0s;
         }
-        .bg-orbs span:nth-child(3) {
-            width: 450px; height: 450px;
-            background: var(--accent-pink);
-            top: 40%; left: 50%;
-            animation-delay: -12s;
+        .bg-gradient span:nth-child(2) {
+            width: 400px; height: 400px;
+            background: linear-gradient(135deg, #fecdd3, #fda4af);
+            bottom: -5%; right: -5%; animation-delay: -7s;
         }
-        @keyframes orbFloat {
+        .bg-gradient span:nth-child(3) {
+            width: 350px; height: 350px;
+            background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
+            top: 50%; left: 40%; animation-delay: -14s;
+        }
+        @keyframes blobFloat {
             0%   { transform: translate(0, 0) scale(1); }
-            50%  { transform: translate(60px, -40px) scale(1.15); }
-            100% { transform: translate(-30px, 50px) scale(0.95); }
+            50%  { transform: translate(50px, -30px) scale(1.1); }
+            100% { transform: translate(-20px, 40px) scale(0.95); }
         }
 
         /* ─── Navigation Dots ─── */
         .nav-dots {
             position: fixed; right: 28px; top: 50%;
             transform: translateY(-50%);
-            z-index: 100; display: flex; flex-direction: column; gap: 14px;
+            z-index: 100; display: flex; flex-direction: column; gap: 12px;
         }
         .nav-dots a {
-            width: 12px; height: 12px; border-radius: 50%;
-            border: 2px solid var(--glass-border);
+            width: 11px; height: 11px; border-radius: 50%;
+            border: 2px solid var(--text-muted);
             background: transparent;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.3s ease; position: relative;
         }
-        .nav-dots a:hover,
-        .nav-dots a.active {
-            background: var(--accent-cyan);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 12px var(--accent-cyan);
+        .nav-dots a:hover, .nav-dots a.active {
+            background: var(--accent-indigo);
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 10px rgba(99,102,241,0.4);
         }
         .nav-dots a .tooltip {
-            position: absolute; right: 24px; top: 50%;
-            transform: translateY(-50%); padding: 5px 12px;
-            background: rgba(0,0,0,0.85); border-radius: 6px;
-            font-size: 0.7rem; white-space: nowrap;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.2s;
+            position: absolute; right: 22px; top: 50%;
+            transform: translateY(-50%); padding: 4px 10px;
+            background: var(--text-dark); color: #fff;
+            border-radius: 6px; font-size: 0.68rem;
+            white-space: nowrap; opacity: 0;
+            pointer-events: none; transition: opacity 0.2s;
         }
         .nav-dots a:hover .tooltip { opacity: 1; }
 
@@ -98,198 +101,251 @@
         .slide {
             min-height: 100vh; width: 100%;
             display: flex; align-items: center; justify-content: center;
-            position: relative; z-index: 1;
-            padding: 80px 60px;
+            position: relative; z-index: 1; padding: 80px 60px;
         }
-        .slide-inner {
-            max-width: 1100px; width: 100%;
-        }
+        .slide-inner { max-width: 1100px; width: 100%; }
 
-        /* ─── Slide Number Badge ─── */
-        .slide-number {
-            display: inline-flex; align-items: center; gap: 8px;
+        /* ─── Slide Badge ─── */
+        .slide-badge {
+            display: inline-flex; align-items: center; gap: 10px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem; letter-spacing: 2px;
-            text-transform: uppercase; color: var(--text-secondary);
-            margin-bottom: 20px;
+            font-size: 0.72rem; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 16px;
         }
-        .slide-number::before {
-            content: ''; width: 28px; height: 1px;
-            background: var(--accent-cyan);
+        .badge-problem { color: var(--accent-coral); }
+        .badge-problem::before {
+            content: ''; width: 24px; height: 2px;
+            background: var(--accent-coral); display: inline-block;
+            vertical-align: middle; margin-right: 4px;
+        }
+        .badge-solution { color: var(--accent-teal); }
+        .badge-solution::before {
+            content: ''; width: 24px; height: 2px;
+            background: var(--accent-teal); display: inline-block;
+            vertical-align: middle; margin-right: 4px;
+        }
+        .badge-neutral { color: var(--accent-indigo); }
+        .badge-neutral::before {
+            content: ''; width: 24px; height: 2px;
+            background: var(--accent-indigo); display: inline-block;
+            vertical-align: middle; margin-right: 4px;
+        }
+        .badge-lit { color: var(--accent-violet); }
+        .badge-lit::before {
+            content: ''; width: 24px; height: 2px;
+            background: var(--accent-violet); display: inline-block;
+            vertical-align: middle; margin-right: 4px;
         }
 
         /* ─── Typography ─── */
         h1 {
-            font-size: clamp(2.8rem, 5vw, 4.5rem);
-            font-weight: 800; line-height: 1.1;
-            letter-spacing: -1.5px;
+            font-size: clamp(2.6rem, 5vw, 4.2rem);
+            font-weight: 800; line-height: 1.1; letter-spacing: -1.5px;
         }
         h2 {
-            font-size: clamp(2rem, 3.5vw, 3rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
             font-weight: 700; line-height: 1.15;
-            letter-spacing: -1px; margin-bottom: 32px;
+            letter-spacing: -1px; margin-bottom: 24px;
         }
-        .gradient-text {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .gradient-coral {
+            background: linear-gradient(135deg, var(--accent-coral), var(--accent-rose));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .gradient-pink {
-            background: linear-gradient(135deg, var(--accent-pink), var(--accent-orange));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .gradient-teal {
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-emerald));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .gradient-green {
-            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .gradient-indigo {
+            background: linear-gradient(135deg, var(--accent-indigo), var(--accent-violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .gradient-amber {
+            background: linear-gradient(135deg, var(--accent-amber), #ef4444);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .gradient-violet {
+            background: linear-gradient(135deg, var(--accent-violet), var(--accent-indigo));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
         p.lead {
-            font-size: 1.15rem; line-height: 1.7;
-            color: var(--text-secondary);
-            max-width: 680px;
+            font-size: 1.1rem; line-height: 1.75;
+            color: var(--text-body); max-width: 680px;
         }
 
-        /* ─── Glass Cards ─── */
-        .glass-card {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px; padding: 28px 32px;
-            backdrop-filter: blur(16px);
-            transition: transform 0.3s, box-shadow 0.3s;
+        /* ─── Cards ─── */
+        .card {
+            background: var(--bg-white);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: 20px; padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
         }
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0,229,255,0.08);
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.06);
         }
-        .card-grid { display: grid; gap: 20px; }
+        .card-grid { display: grid; gap: 18px; }
         .card-grid-2 { grid-template-columns: 1fr 1fr; }
         .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .card-icon { font-size: 1.8rem; margin-bottom: 12px; }
+        .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+        .card-desc { font-size: 0.88rem; color: var(--text-body); line-height: 1.65; }
 
-        .card-icon {
-            font-size: 1.6rem; margin-bottom: 12px;
+        /* ─── Quote Block ─── */
+        .ref-quote {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-top: 20px; padding: 14px 18px;
+            background: var(--bg-soft); border-radius: 12px;
+            border-left: 3px solid var(--accent-indigo);
         }
-        .card-title {
-            font-size: 1.05rem; font-weight: 600;
-            margin-bottom: 8px;
+        .ref-quote.coral-border { border-left-color: var(--accent-coral); }
+        .ref-quote.teal-border { border-left-color: var(--accent-teal); }
+        .ref-quote.violet-border { border-left-color: var(--accent-violet); }
+        .ref-quote .ref-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+        .ref-quote .ref-text {
+            font-size: 0.82rem; color: var(--text-body);
+            line-height: 1.6; font-style: italic;
         }
-        .card-desc {
-            font-size: 0.88rem; color: var(--text-secondary);
-            line-height: 1.6;
+        .ref-quote .ref-source {
+            font-style: normal; font-weight: 600;
+            color: var(--accent-indigo); display: block; margin-top: 4px;
         }
+        .ref-quote.coral-border .ref-source { color: var(--accent-coral); }
+        .ref-quote.teal-border .ref-source { color: var(--accent-teal); }
+        .ref-quote.violet-border .ref-source { color: var(--accent-violet); }
 
-        /* ─── Tags / Chips ─── */
+        /* ─── Tags ─── */
         .chip {
             display: inline-block; padding: 5px 14px;
-            border-radius: 999px; font-size: 0.75rem;
-            font-weight: 600; letter-spacing: 0.5px;
-            margin: 4px 4px 0 0;
+            border-radius: 999px; font-size: 0.73rem;
+            font-weight: 600; letter-spacing: 0.3px;
+            margin: 3px 3px 0 0;
         }
-        .chip-cyan  { background: rgba(0,229,255,0.12); color: var(--accent-cyan); }
-        .chip-purple { background: rgba(179,136,255,0.12); color: var(--accent-purple); }
-        .chip-pink  { background: rgba(255,107,202,0.12); color: var(--accent-pink); }
-        .chip-green { background: rgba(105,240,174,0.12); color: var(--accent-green); }
-        .chip-orange { background: rgba(255,171,64,0.12); color: var(--accent-orange); }
+        .chip-coral  { background: rgba(255,107,107,0.1); color: var(--accent-coral); }
+        .chip-indigo { background: rgba(99,102,241,0.1); color: var(--accent-indigo); }
+        .chip-teal   { background: rgba(20,184,166,0.1); color: var(--accent-teal); }
+        .chip-amber  { background: rgba(245,158,11,0.1); color: var(--accent-amber); }
+        .chip-rose   { background: rgba(244,63,94,0.1); color: var(--accent-rose); }
+        .chip-violet { background: rgba(139,92,246,0.1); color: var(--accent-violet); }
+        .chip-sky    { background: rgba(14,165,233,0.1); color: var(--accent-sky); }
 
-        /* ─── Images ─── */
+        /* ─── Plot Images ─── */
         .plot-img {
-            width: 100%; border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            transition: transform 0.3s;
+            display: block; margin: 0 auto;
+            max-width: 100%; max-height: 250px; width: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
-        .plot-img:hover { transform: scale(1.02); }
-
+        .plot-img:hover { 
+            transform: scale(1.03) translateY(-2px); 
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+            position: relative; z-index: 10;
+        }
         .img-caption {
-            font-size: 0.78rem; color: var(--text-secondary);
+            font-size: 0.75rem; color: var(--text-muted);
             margin-top: 8px; text-align: center;
             font-family: 'JetBrains Mono', monospace;
         }
 
         /* ─── Comparison Table ─── */
         .compare-table {
-            width: 100%; border-collapse: collapse;
-            margin-top: 20px;
+            width: 100%; border-collapse: collapse; margin-top: 16px;
         }
         .compare-table th, .compare-table td {
-            padding: 14px 20px; text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 18px; text-align: left;
+            border-bottom: 1px solid var(--border-light);
         }
         .compare-table th {
-            font-size: 0.75rem; text-transform: uppercase;
-            letter-spacing: 1.5px; color: var(--text-secondary);
+            font-size: 0.72rem; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--text-muted);
+            background: var(--bg-soft);
         }
-        .compare-table td {
-            font-size: 0.9rem;
-        }
-        .compare-table tr:hover td {
-            background: rgba(255,255,255,0.02);
-        }
+        .compare-table td { font-size: 0.85rem; color: var(--text-body); }
+        .compare-table tr:hover td { background: var(--bg-soft); }
+        .highlight { color: var(--accent-teal); font-weight: 600; }
+        .fade { color: var(--text-muted); }
 
-        /* ─── Timeline ─── */
-        .timeline { position: relative; padding-left: 32px; }
-        .timeline::before {
-            content: ''; position: absolute; left: 8px;
-            top: 0; bottom: 0; width: 2px;
-            background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
-            border-radius: 2px;
-        }
-        .timeline-item {
-            position: relative; margin-bottom: 32px;
-        }
-        .timeline-item::before {
-            content: ''; position: absolute; left: -28px; top: 6px;
-            width: 12px; height: 12px; border-radius: 50%;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 12px var(--accent-cyan);
-        }
-        .timeline-item h4 {
-            font-size: 1rem; font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .timeline-item p {
-            font-size: 0.88rem; color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* ─── Stat Pill ─── */
-        .stat-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 28px; }
+        /* ─── Stat Pills ─── */
+        .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
         .stat-pill {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 16px 24px;
-            text-align: center; flex: 1; min-width: 130px;
+            background: var(--bg-white); border: 1px solid var(--border-light);
+            border-radius: 14px; padding: 16px 22px;
+            text-align: center; flex: 1; min-width: 120px;
+            box-shadow: var(--shadow-sm);
         }
         .stat-pill .stat-val {
-            font-size: 1.8rem; font-weight: 800;
+            font-size: 1.7rem; font-weight: 800;
             font-family: 'JetBrains Mono', monospace;
         }
         .stat-pill .stat-label {
-            font-size: 0.72rem; color: var(--text-secondary);
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-top: 4px;
+            font-size: 0.7rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;
         }
 
-        /* ─── Hero CTA ─── */
-        .hero-sub {
-            margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;
+        /* ─── Hero Tags ─── */
+        .hero-sub { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .hero-sub .chip { font-size: 0.8rem; padding: 7px 16px; }
+
+        /* ─── Insight Box ─── */
+        .insight-box {
+            margin-top: 24px; padding: 22px 28px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06));
+            border: 1px solid rgba(99,102,241,0.12);
+            border-radius: 16px; text-align: center;
         }
-        .hero-sub .chip { font-size: 0.82rem; padding: 8px 18px; }
+        .insight-box h3 { font-size: 1.15rem; margin-bottom: 10px; }
+
+        /* ─── Mini Table ─── */
+        .mini-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.82rem; margin-top: 12px;
+        }
+        .mini-table th {
+            padding: 10px 14px; text-align: left;
+            background: var(--bg-soft); font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: var(--text-muted); border-bottom: 1px solid var(--border-light);
+        }
+        .mini-table td {
+            padding: 10px 14px; border-bottom: 1px solid var(--border-light);
+            color: var(--text-body); line-height: 1.5;
+        }
+        .mini-table tr:hover td { background: var(--bg-soft); }
 
         /* ─── Footer ─── */
         .footer {
-            text-align: center; padding: 48px 24px;
-            font-size: 0.78rem; color: var(--text-secondary);
-            border-top: 1px solid var(--glass-border);
+            text-align: center; padding: 40px 24px;
+            font-size: 0.78rem; color: var(--text-muted);
+            border-top: 1px solid var(--border-light);
             position: relative; z-index: 1;
         }
 
-        /* ─── Scroll-reveal ─── */
+        /* ─── Reveal ─── */
         .reveal {
-            opacity: 0; transform: translateY(40px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
         }
-        .reveal.visible {
-            opacity: 1; transform: translateY(0);
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* ─── Reference List ─── */
+        .ref-list { list-style: none; counter-reset: ref; }
+        .ref-list li {
+            counter-increment: ref; padding: 14px 0;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.88rem; color: var(--text-body);
+            line-height: 1.65; position: relative; padding-left: 36px;
         }
+        .ref-list li::before {
+            content: '[' counter(ref) ']';
+            position: absolute; left: 0; top: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem; font-weight: 700;
+            color: var(--accent-indigo);
+        }
+        .ref-list .ref-title { font-weight: 600; color: var(--text-dark); }
+        .ref-list .ref-detail { font-size: 0.82rem; color: var(--text-muted); }
 
         /* ─── Responsive ─── */
         @media (max-width: 768px) {
@@ -303,408 +359,602 @@
 </head>
 <body>
 
-<!-- Ambient Orbs -->
-<div class="bg-orbs"><span></span><span></span><span></span></div>
+<!-- Background -->
+<div class="bg-gradient"><span></span><span></span><span></span></div>
 
-<!-- Navigation Dots -->
+<!-- Navigation -->
 <nav class="nav-dots" id="navDots">
-    <a href="#slide-1"><span class="tooltip">Problem</span></a>
-    <a href="#slide-2"><span class="tooltip">Dataset</span></a>
-    <a href="#slide-3"><span class="tooltip">Literature</span></a>
-    <a href="#slide-4"><span class="tooltip">EDA</span></a>
-    <a href="#slide-5"><span class="tooltip">Features</span></a>
-    <a href="#slide-6"><span class="tooltip">Models</span></a>
-    <a href="#slide-7"><span class="tooltip">Training</span></a>
+    <a href="#slide-1"><span class="tooltip">Title</span></a>
+    <a href="#slide-2"><span class="tooltip">Problem</span></a>
+    <a href="#slide-3"><span class="tooltip">Dataset</span></a>
+    <a href="#slide-4"><span class="tooltip">Literature Review</span></a>
+    <a href="#slide-5"><span class="tooltip">EDA &amp; Preprocessing</span></a>
+    <a href="#slide-6"><span class="tooltip">Feature Engineering</span></a>
+    <a href="#slide-7"><span class="tooltip">Model Selection</span></a>
     <a href="#slide-8"><span class="tooltip">Results</span></a>
+    <a href="#slide-9"><span class="tooltip">References</span></a>
 </nav>
 
+
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 1 — THE PROBLEM
+     SLIDE 1 — TITLE
      ═══════════════════════════════════════════════════ -->
 <section class="slide" id="slide-1">
-    <div class="slide-inner reveal">
-        <div class="slide-number">01 &mdash; The Problem</div>
+    <div class="slide-inner reveal" style="text-align: center;">
+        <div class="slide-badge badge-neutral">Adaptive Security Research</div>
         <h1>
-            Cyber-physical systems<br>
-            can't detect what they've<br>
-            <span class="gradient-text">never seen before.</span>
+            Adaptive<br>
+            <span class="gradient-indigo">Cyber-Physical</span><br>
+            Security
         </h1>
-        <p class="lead" style="margin-top: 24px;">
-            Traditional intrusion detection relies on known attack signatures.
-            When a new, never-before-seen threat appears — a <strong>zero-day attack</strong> — these systems go silent.
+        <p class="lead" style="margin: 24px auto 0; text-align: center; max-width: 600px;">
+            Combining supervised classification and anomaly detection
+            to defend against <strong>known</strong> and <strong>zero-day</strong> threats
+            using the CIC-IDS-2018 benchmark.
         </p>
-        <div class="hero-sub">
-            <span class="chip chip-pink">Zero-Day Blindness</span>
-            <span class="chip chip-cyan">Open-World Threat</span>
-            <span class="chip chip-purple">Evolving Adversaries</span>
+        <div class="hero-sub" style="justify-content: center;">
+            <span class="chip chip-indigo">Intrusion Detection</span>
+            <span class="chip chip-teal">Zero-Day Detection</span>
+            <span class="chip chip-coral">CIC-IDS-2018</span>
         </div>
+        <div style="margin-top: 40px; color: var(--text-muted); font-size: 0.88rem;">
+            <strong style="color: var(--text-dark);">Pugazhendhi J &amp; Dally R</strong><br>
+            Department of CS and AI · Rishihood University
+        </div>
+    </div>
+</section>
 
-        <div class="card-grid card-grid-3" style="margin-top: 48px;">
-            <div class="glass-card">
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 2 — THE PROBLEM
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-2">
+    <div class="slide-inner reveal">
+        <div class="slide-badge badge-problem">01 — The Problem</div>
+        <h2>Cyber-physical systems can't<br>detect what they've <span class="gradient-coral">never seen.</span></h2>
+        <p class="lead">
+            Traditional intrusion detection matches known attack "fingerprints."
+            When a new, never-before-seen threat appears — a <strong>zero-day attack</strong> — these systems stay silent.
+            And the datasets used to train them are decades old.
+        </p>
+
+        <div class="card-grid card-grid-3" style="margin-top: 36px;">
+            <div class="card">
                 <div class="card-icon">🔒</div>
                 <div class="card-title">Signature-Based IDS</div>
-                <div class="card-desc">Matches known fingerprints. Fast and precise, but completely blind to novel attacks.</div>
+                <div class="card-desc">Matches known fingerprints. Fast, but <strong>blind</strong> to novel attacks.</div>
             </div>
-            <div class="glass-card">
+            <div class="card">
                 <div class="card-icon">📊</div>
                 <div class="card-title">Anomaly-Based IDS</div>
-                <div class="card-desc">Learns "normal" behavior. Can theoretically detect zero-days, but floods analysts with false positives.</div>
+                <div class="card-desc">Learns "normal" behavior. Can catch zero-days, but <strong>too many false positives.</strong></div>
             </div>
-            <div class="glass-card">
-                <div class="card-icon">🎯</div>
-                <div class="card-title">Our Goal</div>
-                <div class="card-desc">Combine supervised classification with anomaly detection for adaptive, zero-day-aware security.</div>
+            <div class="card">
+                <div class="card-icon">⏳</div>
+                <div class="card-title">Outdated Benchmarks</div>
+                <div class="card-desc">NSL-KDD is from <strong>1999</strong>. No DDoS, no botnets, only 125K records.</div>
+            </div>
+        </div>
+
+        <div class="ref-quote coral-border">
+            <span class="ref-icon">📄</span>
+            <div>
+                <div class="ref-text">
+                    "NSL-KDD is an old data set that does not represent modern network traffic."
+                    <span class="ref-source">— Guo, "ML-based Zero-Day Attack Detection: Challenges and Future Directions," Computer Communications, 2023, p. 3</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 2 — DATASET CHOICE
+     SLIDE 3 — DATASET (Problem → Solution)
      ═══════════════════════════════════════════════════ -->
-<section class="slide" id="slide-2">
+<section class="slide" id="slide-3">
     <div class="slide-inner reveal">
-        <div class="slide-number">02 &mdash; Why CIC-IDS-2018</div>
-        <h2>The old datasets are <span class="gradient-pink">holding us back.</span></h2>
+        <div class="slide-badge badge-teal badge-solution">02 — Dataset Choice</div>
+        <h2>From KDD to CIC-IDS-2018 —<br><span class="gradient-teal">a modern solution.</span></h2>
         <p class="lead">
-            NSL-KDD is the most-used benchmark in intrusion detection research.
-            But it's from <strong>1999</strong> — it misses modern attacks, modern traffic patterns, and modern network topologies.
-            We needed something current.
+            Researchers agree: legacy datasets fail modern IDS research.
+            CIC-IDS-2018 was designed with real traffic profiles and 14+ modern attack families — the gold standard.
         </p>
 
-        <table class="compare-table" style="margin-top: 36px;">
+        <table class="compare-table" style="margin-top: 24px;">
             <thead>
                 <tr>
                     <th>Criteria</th>
-                    <th>NSL-KDD (1999)</th>
+                    <th>NSL-KDD (1999) ✗</th>
                     <th>CIC-IDS-2018 ✓</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>Attack Types</td>
-                    <td>4 generic categories</td>
-                    <td><strong>14+ realistic attack families</strong></td>
+                    <td class="fade">4 generic categories</td>
+                    <td class="highlight">14+ realistic attack families</td>
                 </tr>
                 <tr>
                     <td>Traffic Realism</td>
-                    <td>Simulated lab traffic</td>
-                    <td><strong>Real-world profiled flows</strong></td>
+                    <td class="fade">Simulated lab traffic</td>
+                    <td class="highlight">Real-world profiled flows</td>
                 </tr>
                 <tr>
                     <td>Scale</td>
-                    <td>~125K records</td>
-                    <td><strong>8.2M+ flow records</strong></td>
+                    <td class="fade">~125K records</td>
+                    <td class="highlight">8.2M+ flow records</td>
                 </tr>
                 <tr>
                     <td>Modern Attacks</td>
-                    <td>No DDoS, no botnets</td>
-                    <td><strong>DDoS, Botnets, Brute-Force, Web Attacks</strong></td>
-                </tr>
-                <tr>
-                    <td>Community Consensus</td>
-                    <td>Outdated benchmark</td>
-                    <td><strong>Gold standard for ML-based IDS</strong></td>
+                    <td class="fade">No DDoS, no botnets</td>
+                    <td class="highlight">DDoS, Botnets, Brute-Force, Web Attacks</td>
                 </tr>
             </tbody>
         </table>
 
         <div class="stat-row">
             <div class="stat-pill">
-                <div class="stat-val gradient-text">8.2M</div>
+                <div class="stat-val gradient-teal">8.2M</div>
                 <div class="stat-label">Flow Records</div>
             </div>
             <div class="stat-pill">
-                <div class="stat-val gradient-text">14</div>
+                <div class="stat-val gradient-teal">14</div>
                 <div class="stat-label">Attack Types</div>
             </div>
             <div class="stat-pill">
-                <div class="stat-val gradient-text">52</div>
+                <div class="stat-val gradient-teal">81</div>
                 <div class="stat-label">Features</div>
             </div>
             <div class="stat-pill">
-                <div class="stat-val gradient-text">2018</div>
+                <div class="stat-val gradient-teal">2018</div>
                 <div class="stat-label">Year Released</div>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- ═══════════════════════════════════════════════════
-     SLIDE 3 — LITERATURE REVIEW
-     ═══════════════════════════════════════════════════ -->
-<section class="slide" id="slide-3">
-    <div class="slide-inner reveal">
-        <div class="slide-number">03 &mdash; Literature Review</div>
-        <h2>What the research tells us — <br><span class="gradient-green">and where the gap is.</span></h2>
-
-        <div class="timeline" style="margin-top: 40px;">
-            <div class="timeline-item">
-                <h4>IDS Evolution</h4>
-                <p>From static firewalls to continuous monitoring. Early systems were built for enterprise LANs — modern CPS spans cloud, IoT, and industrial control.</p>
-            </div>
-            <div class="timeline-item">
-                <h4>ML in Cybersecurity</h4>
-                <p>Supervised models like Random Forest achieve near-perfect accuracy on known attacks. But "known" is the key word — they memorize, not generalize.</p>
-            </div>
-            <div class="timeline-item">
-                <h4>Anomaly Detection</h4>
-                <p>One-Class SVMs and autoencoders frame detection as boundary estimation. They don't need attack labels — just a model of what "normal" looks like.</p>
-            </div>
-            <div class="timeline-item">
-                <h4>⚠️ The Gap</h4>
-                <p>Most papers evaluate on random train/test splits — leaking future attack knowledge into training. When models face true zero-day threats, recall collapses.</p>
-            </div>
-            <div class="timeline-item">
-                <h4>Our Contribution</h4>
-                <p>A dual-model framework that explicitly tests for zero-day scenarios: supervised classification for known threats, anomaly detection for novel ones.</p>
+        <div class="ref-quote teal-border">
+            <span class="ref-icon">📄</span>
+            <div>
+                <div class="ref-text">
+                    "CSE-CIC-IDS2018 contains more recent network traffic than NSL-KDD…covering 14 different intrusion types from six major categories."
+                    <span class="ref-source">— Guo, "ML-based Zero-Day Attack Detection," Computer Communications, 2023, pp. 2–4</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 4 — EDA
+     SLIDE 4 — LITERATURE REVIEW
      ═══════════════════════════════════════════════════ -->
 <section class="slide" id="slide-4">
     <div class="slide-inner reveal">
-        <div class="slide-number">04 &mdash; Exploratory Data Analysis</div>
-        <h2>Seeing the data <span class="gradient-text">clearly.</span></h2>
-        <p class="lead" style="margin-bottom: 36px;">
-            8.2 million network flows — 74% benign, 26% attacks across 14 categories.
-            Here's what the data looks like before any engineering.
-        </p>
+        <div class="slide-badge badge-lit">03 — Literature Review</div>
+        <h2>What the research says —<br><span class="gradient-violet">and where the gap is.</span></h2>
 
-        <div class="card-grid card-grid-2">
-            <div class="glass-card" style="padding: 16px;">
-                <img src="../outputs/plots/eda/label_distribution.png" alt="Label Distribution" class="plot-img">
-                <div class="img-caption">Binary Label Distribution — Benign vs Attack</div>
+        <div class="card-grid card-grid-2" style="margin-top: 28px;">
+            <div class="card" style="border-top: 3px solid var(--accent-violet);">
+                <div class="card-icon">🧠</div>
+                <div class="card-title">ML in Cybersecurity</div>
+                <div class="card-desc">
+                    Supervised models like Random Forest achieve near-perfect accuracy on <em>known</em> attacks.
+                    But "known" is the key word — they memorize, not generalize.
+                </div>
+                <div class="ref-quote violet-border" style="margin-top: 14px;">
+                    <span class="ref-icon">📄</span>
+                    <div>
+                        <div class="ref-text">
+                            "Decision tree model was best; TPR up to 96%, FPR at 5%… varying accuracy depending on attack type."
+                            <span class="ref-source">— Guo, 2023, p. 9, Table 1</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="glass-card" style="padding: 16px;">
-                <img src="../outputs/plots/eda/correlation_heatmap.png" alt="Correlation Heatmap" class="plot-img">
-                <div class="img-caption">Feature Correlation Heatmap — Identifying Redundancy</div>
+            <div class="card" style="border-top: 3px solid var(--accent-amber);">
+                <div class="card-icon">🔮</div>
+                <div class="card-title">Anomaly Detection</div>
+                <div class="card-desc">
+                    One-Class SVMs frame detection as boundary estimation —
+                    no attack labels needed. But recall varies wildly across attack types.
+                </div>
+                <div class="ref-quote violet-border" style="margin-top: 14px;">
+                    <span class="ref-icon">📄</span>
+                    <div>
+                        <div class="ref-text">
+                            "One-class SVM: Recall varies from 27% to 99%… inconsistency against different attacks."
+                            <span class="ref-source">— Guo, 2023, p. 9, Table 1</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="glass-card" style="margin-top: 20px; padding: 16px;">
-            <img src="../outputs/plots/eda/feature_histograms.png" alt="Feature Histograms" class="plot-img">
-            <div class="img-caption">Feature Distribution Histograms — Skewness &amp; Outliers</div>
+        <!-- Model Comparison Table from Article (p.9) -->
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-title" style="margin-bottom: 4px;">Model Comparison from Literature</div>
+            <div class="card-desc" style="margin-bottom: 8px; font-size: 0.8rem;">
+                Adapted from Guo (2023), Table 1, p. 9
+            </div>
+            <table class="mini-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>ML Model</th>
+                        <th>Training Data</th>
+                        <th>Results</th>
+                        <th>Challenge</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Outlier Detector</td>
+                        <td>One-Class SVM</td>
+                        <td>CIC-IDS2017, NSL-KDD</td>
+                        <td class="highlight">Recall: 27%–99%</td>
+                        <td class="fade">Inconsistent across attacks</td>
+                    </tr>
+                    <tr>
+                        <td>6-Detector Comparison</td>
+                        <td>RF, MLP, KNN</td>
+                        <td><strong>CSE-CIC-IDS2018</strong></td>
+                        <td class="highlight">TPR up to 96%</td>
+                        <td class="fade">Varying by attack type</td>
+                    </tr>
+                    <tr>
+                        <td>Hybrid Method</td>
+                        <td>RF &amp; SVM</td>
+                        <td>Private dataset</td>
+                        <td class="highlight">88.54% zero-day detected</td>
+                        <td class="fade">Private data, hard to compare</td>
+                    </tr>
+                    <tr>
+                        <td>Transfer Learning</td>
+                        <td>SVM, KNN, DT</td>
+                        <td>NSL-KDD</td>
+                        <td class="fade">70% acc, 0.75 F1</td>
+                        <td class="fade">Low accuracy, limited tests</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" style="margin-top: 20px; border-left: 4px solid var(--accent-rose);">
+            <div class="card-icon">⚠️</div>
+            <div class="card-title" style="color: var(--accent-rose);">The Gap</div>
+            <div class="card-desc">
+                Most papers evaluate on random train/test splits — leaking future attack knowledge into training.
+                When models face <strong>true zero-day threats</strong>, recall collapses.
+                There's no structured framework that tests both known-attack classification <em>and</em> true novelty detection together.
+            </div>
         </div>
     </div>
 </section>
 
+
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 5 — FEATURE ENGINEERING
+     SLIDE 5 — EDA & PREPROCESSING
      ═══════════════════════════════════════════════════ -->
 <section class="slide" id="slide-5">
     <div class="slide-inner reveal">
-        <div class="slide-number">05 &mdash; Feature Engineering</div>
-        <h2>Cleaning the signal from <span class="gradient-pink">the noise.</span></h2>
+        <div class="slide-badge badge-neutral">04 — EDA &amp; Preprocessing</div>
+        <h2>Understanding the data<br><span class="gradient-indigo">before modeling.</span></h2>
+        <p class="lead" style="margin-bottom: 24px;">
+            8.2 million network flows — 74% benign, 26% attacks across 14 categories.
+            Raw data contains infinite values, high correlations, and identifier columns that leak topology.
+        </p>
 
-        <div class="card-grid card-grid-3" style="margin-bottom: 32px;">
-            <div class="glass-card">
-                <div class="card-icon">🗑️</div>
-                <div class="card-title">Drop Identifiers</div>
-                <div class="card-desc">Removed Flow ID, IPs, Timestamp — prevents the model from memorizing network topology.</div>
+        <div class="card-grid card-grid-2">
+            <div class="card" style="padding: 16px;">
+                <img src="../outputs/plots/eda/label_distribution.png" alt="Label Distribution" class="plot-img">
+                <div class="img-caption">Binary Label Distribution — Benign vs Attack</div>
             </div>
-            <div class="glass-card">
-                <div class="card-icon">♻️</div>
-                <div class="card-title">Remove Constants</div>
-                <div class="card-desc">Dropped zero-variance columns that carry no information for classification.</div>
+            <div class="card" style="padding: 16px;">
+                <img src="../outputs/plots/eda/correlation_heatmap.png" alt="Correlation Heatmap" class="plot-img">
+                <div class="img-caption">Correlation Heatmap — Dense redundancy blocks</div>
             </div>
-            <div class="glass-card">
-                <div class="card-icon">📐</div>
-                <div class="card-title">Correlation Pruning</div>
-                <div class="card-desc">Removed features with &gt;0.98 correlation to reduce redundancy and stabilize models.</div>
+        </div>
+
+        <div class="card" style="margin-top: 18px; padding: 16px;">
+            <img src="../outputs/plots/eda/feature_histograms.png" alt="Feature Histograms" class="plot-img">
+            <div class="img-caption">Feature Histograms — Heavy-tailed, skewed, full of outliers</div>
+        </div>
+
+        <div class="card" style="margin-top: 18px;">
+            <div class="card-title">Preprocessing Steps</div>
+            <div class="card-desc">
+                <strong>1.</strong> Dropped identifiers (Flow ID, IPs, Timestamp) &nbsp;→&nbsp;
+                <strong>2.</strong> Replaced <code>inf</code>/<code>-inf</code> with NaN &nbsp;→&nbsp;
+                <strong>3.</strong> Dropped columns with &gt;50% missing values &nbsp;→&nbsp;
+                <strong>4.</strong> Filled remaining NaN with 0 &nbsp;→&nbsp;
+                <strong>5.</strong> Normalized labels to lowercase
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 6 — FEATURE ENGINEERING (Problem → Solution)
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-6">
+    <div class="slide-inner reveal">
+        <div class="slide-badge badge-solution">05 — Feature Engineering</div>
+        <h2>From noisy data <span class="gradient-coral">→</span> clean signal<br><span class="gradient-teal">ready for modeling.</span></h2>
+
+        <div class="card-grid card-grid-2" style="margin-bottom: 24px;">
+            <div class="card" style="border-top: 3px solid var(--accent-coral);">
+                <div class="card-icon">❌</div>
+                <div class="card-title">The Problem</div>
+                <div class="card-desc">
+                    81 raw features full of infinite values, zero-variance columns,
+                    and highly correlated pairs (ρ &gt; 0.98) that inflate noise and distort models.
+                </div>
+            </div>
+            <div class="card" style="border-top: 3px solid var(--accent-teal);">
+                <div class="card-icon">✅</div>
+                <div class="card-title">The Solution</div>
+                <div class="card-desc">
+                    Drop identifiers → remove constant features →
+                    prune correlated pairs (threshold = 0.98) →
+                    clean, 52-feature dataset ready for classification.
+                </div>
             </div>
         </div>
 
         <div class="card-grid card-grid-2">
-            <div class="glass-card" style="padding: 16px;">
-                <img src="../outputs/plots/feature_engineering/clean_correlation_heatmap.png" alt="Clean Correlation Heatmap" class="plot-img">
-                <div class="img-caption">Post-Engineering Correlation — Much Less Redundancy</div>
+            <div class="card" style="padding: 16px;">
+                <img src="../outputs/plots/feature_engineering/clean_correlation_heatmap.png" alt="Clean Correlation" class="plot-img">
+                <div class="img-caption">Post-Engineering — Redundancy blocks removed</div>
             </div>
-            <div class="glass-card" style="padding: 16px;">
-                <img src="../outputs/plots/feature_engineering/clean_feature_histograms.png" alt="Clean Feature Histograms" class="plot-img">
-                <div class="img-caption">Cleaned Feature Distributions — Ready for Modeling</div>
+            <div class="card" style="padding: 16px;">
+                <img src="../outputs/plots/feature_engineering/clean_feature_histograms.png" alt="Clean Histograms" class="plot-img">
+                <div class="img-caption">Cleaned Distributions — Ready for modeling</div>
             </div>
         </div>
 
         <div class="stat-row">
             <div class="stat-pill">
-                <div class="stat-val gradient-pink">80→49</div>
+                <div class="stat-val gradient-teal">81→52</div>
                 <div class="stat-label">Features Reduced</div>
             </div>
             <div class="stat-pill">
-                <div class="stat-val gradient-pink">0.98</div>
+                <div class="stat-val gradient-teal">0.98</div>
                 <div class="stat-label">Correlation Threshold</div>
             </div>
             <div class="stat-pill">
-                <div class="stat-val gradient-pink">0</div>
-                <div class="stat-label">Inf/NaN Remaining</div>
+                <div class="stat-val gradient-teal">0</div>
+                <div class="stat-label">Inf / NaN Remaining</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════
-     SLIDE 6 — MODEL SELECTION
-     ═══════════════════════════════════════════════════ -->
-<section class="slide" id="slide-6">
-    <div class="slide-inner reveal">
-        <div class="slide-number">06 &mdash; Model Selection</div>
-        <h2>Two models, <span class="gradient-green">two roles.</span></h2>
-        <p class="lead" style="margin-bottom: 36px;">
-            Cyber defense is an open-world problem. One model can't do it all.
-            We chose two complementary approaches — one for known threats, one for the unknown.
-        </p>
-
-        <div class="card-grid card-grid-2">
-            <div class="glass-card" style="border-left: 3px solid var(--accent-cyan);">
-                <div class="card-icon">🌲</div>
-                <div class="card-title" style="font-size: 1.2rem;">Random Forest</div>
-                <div class="card-desc" style="margin-bottom: 16px;">
-                    <strong>Role:</strong> Supervised classification of known attack labels.
-                </div>
-                <div class="card-desc">
-                    <strong>Why:</strong> Handles nonlinear boundaries in tabular data. Robust to correlated features. No scaling needed. Ensemble of 100 trees with majority voting.
-                </div>
-                <div style="margin-top: 16px;">
-                    <span class="chip chip-cyan">Supervised</span>
-                    <span class="chip chip-cyan">100 Trees</span>
-                    <span class="chip chip-cyan">Known Attacks</span>
-                </div>
-            </div>
-            <div class="glass-card" style="border-left: 3px solid var(--accent-orange);">
-                <div class="card-icon">🔮</div>
-                <div class="card-title" style="font-size: 1.2rem;">One-Class SVM</div>
-                <div class="card-desc" style="margin-bottom: 16px;">
-                    <strong>Role:</strong> Anomaly detection — trained on benign traffic only.
-                </div>
-                <div class="card-desc">
-                    <strong>Why:</strong> Learns the boundary of "normal." Anything outside is flagged as anomalous. Doesn't need attack labels — ideal for zero-day detection.
-                </div>
-                <div style="margin-top: 16px;">
-                    <span class="chip chip-orange">Semi-Supervised</span>
-                    <span class="chip chip-orange">RBF Kernel</span>
-                    <span class="chip chip-orange">Zero-Day</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card" style="margin-top: 24px; text-align: center; padding: 20px;">
-            <div class="card-desc" style="font-size: 0.9rem;">
-                💡 <em>This dual-model approach is supported by recent literature — combining discriminative classifiers with anomaly detectors provides both precision on known threats and resilience to novel attacks.</em>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 7 — TRAINING & TESTING
+     SLIDE 7 — MODEL SELECTION
      ═══════════════════════════════════════════════════ -->
 <section class="slide" id="slide-7">
     <div class="slide-inner reveal">
-        <div class="slide-number">07 &mdash; Training &amp; Testing</div>
-        <h2>The zero-day <span class="gradient-text">evaluation framework.</span></h2>
+        <div class="slide-badge badge-neutral">06 — Model Selection</div>
+        <h2>Two models, <span class="gradient-indigo">two complementary roles.</span></h2>
+        <p class="lead">
+            One classifies known attacks. The other detects anything abnormal.
+            Together, they cover known threats <em>and</em> zero-day unknowns.
+        </p>
 
-        <div class="card-grid card-grid-2" style="margin-top: 36px;">
-            <div class="glass-card">
-                <div class="card-title" style="color: var(--accent-cyan); font-size: 1.1rem;">Random Forest Split</div>
-                <table class="compare-table" style="margin-top: 8px;">
-                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TRAINING</td><td>Benign + <span class="chip chip-green" style="font-size: 0.7rem;">DoS-Hulk</span></td></tr>
-                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING (seen)</td><td>Held-out Benign + DoS-Hulk</td></tr>
-                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING (zero-day)</td><td><span class="chip chip-pink" style="font-size: 0.7rem;">Bot</span> <span class="chip chip-pink" style="font-size: 0.7rem;">SlowHTTPTest</span></td></tr>
-                </table>
-                <div class="card-desc" style="margin-top: 12px;">
-                    Attack types withheld from training to simulate a real zero-day scenario. 80/20 stratified split. <code style="color:var(--accent-cyan); font-size:0.82rem;">random_state=42</code>
+        <div class="card-grid card-grid-2" style="margin-top: 28px;">
+            <div class="card" style="border-left: 4px solid var(--accent-indigo);">
+                <div class="card-icon">🌲</div>
+                <div class="card-title" style="font-size: 1.15rem;">Random Forest</div>
+                <div class="card-desc">
+                    <strong>Role:</strong> Supervised classification of known attacks.<br>
+                    <strong>How:</strong> 100 decision trees, each trained on a bootstrap sample.
+                    Majority vote decides the class. No scaling needed.
+                </div>
+                <div style="margin-top: 14px;">
+                    <span class="chip chip-indigo">Supervised</span>
+                    <span class="chip chip-indigo">100 Trees</span>
+                    <span class="chip chip-indigo">Known Attacks</span>
+                </div>
+                <div class="ref-quote" style="margin-top: 14px;">
+                    <span class="ref-icon">📄</span>
+                    <div>
+                        <div class="ref-text">
+                            <strong>Training:</strong> Benign + DoS-Hulk (80/20 split)<br>
+                            <strong>Testing:</strong> Held-out Benign + DoS-Hulk + <span style="color: var(--accent-coral); font-weight: 600;">Bot, SlowHTTPTest</span> (zero-day)
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="glass-card">
-                <div class="card-title" style="color: var(--accent-orange); font-size: 1.1rem;">One-Class SVM Split</div>
-                <table class="compare-table" style="margin-top: 8px;">
-                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TRAINING</td><td>Benign only <span class="chip chip-green" style="font-size: 0.7rem;">20K samples</span></td></tr>
-                    <tr><td style="color: var(--text-secondary); font-size: 0.8rem;">TESTING</td><td>Held-out Benign + <strong>ALL</strong> attacks</td></tr>
-                </table>
-                <div class="card-desc" style="margin-top: 12px;">
-                    All attacks are zero-day by design — the model has never seen any malicious traffic. StandardScaler applied before fitting.
+            <div class="card" style="border-left: 4px solid var(--accent-amber);">
+                <div class="card-icon">🔮</div>
+                <div class="card-title" style="font-size: 1.15rem;">One-Class SVM</div>
+                <div class="card-desc">
+                    <strong>Role:</strong> Anomaly detection — trained on benign traffic only.<br>
+                    <strong>How:</strong> Learns the boundary of "normal" using an RBF kernel.
+                    Anything outside is flagged. No attack labels needed.
+                </div>
+                <div style="margin-top: 14px;">
+                    <span class="chip chip-amber">Semi-Supervised</span>
+                    <span class="chip chip-amber">RBF Kernel</span>
+                    <span class="chip chip-amber">Zero-Day</span>
+                </div>
+                <div class="ref-quote" style="margin-top: 14px; border-left-color: var(--accent-amber);">
+                    <span class="ref-icon">📄</span>
+                    <div>
+                        <div class="ref-text">
+                            <strong>Training:</strong> Benign only (20K samples, StandardScaler)<br>
+                            <strong>Testing:</strong> Held-out Benign + <span style="color: var(--accent-coral); font-weight: 600;">ALL attacks</span> (everything is zero-day)
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="glass-card" style="margin-top: 24px;">
-            <div class="card-title">Evaluation Metrics</div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-                <span class="chip chip-cyan">Accuracy</span>
-                <span class="chip chip-purple">Precision</span>
-                <span class="chip chip-green">Recall</span>
-                <span class="chip chip-orange">F1-Score</span>
-                <span class="chip chip-pink">Zero-Day Recall ⭐</span>
-            </div>
-            <div class="card-desc" style="margin-top: 12px;">
-                <strong>Zero-Day Recall</strong> = True positives on unseen attacks ÷ All unseen attacks.
-                The most critical metric — a model can score 99% accuracy while missing every zero-day.
+        <div class="ref-quote violet-border" style="margin-top: 20px;">
+            <span class="ref-icon">📄</span>
+            <div>
+                <div class="ref-text">
+                    "Hybrid method using Random Forest &amp; SVM detected 88.54% of zero-day attacks… combining supervised classifiers with anomaly detectors provides both precision on known threats and resilience to novel attacks."
+                    <span class="ref-source">— Guo, 2023, p. 9, Table 1</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+
 <!-- ═══════════════════════════════════════════════════
-     SLIDE 8 — RESULTS
+     SLIDE 8 — RESULTS & SUMMARY
      ═══════════════════════════════════════════════════ -->
 <section class="slide" id="slide-8">
     <div class="slide-inner reveal">
-        <div class="slide-number">08 &mdash; Results</div>
-        <h2>What the models <span class="gradient-pink">revealed.</span></h2>
-        <p class="lead" style="margin-bottom: 36px;">
-            Random Forest dominates known attacks. One-Class SVM catches what it can't.
-            Neither alone is sufficient — together, they form an adaptive defense.
+        <div class="slide-badge badge-neutral">07 — Results &amp; Summary</div>
+        <h2>What the models <span class="gradient-amber">revealed.</span></h2>
+        <p class="lead" style="margin-bottom: 24px;">
+            RF dominates known attacks. OCSVM catches what it can't.
+            Our Hybrid approach combines both for adaptive defense.
         </p>
 
-        <div class="card-grid card-grid-2">
-            <div class="glass-card" style="padding: 16px;">
-                <div class="card-title" style="text-align: center; margin-bottom: 12px; color: var(--accent-cyan);">Random Forest</div>
+        <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div class="card" style="padding: 12px;">
+                <div class="card-title" style="text-align: center; margin-bottom: 8px; color: var(--accent-indigo); font-size: 0.9rem;">Random Forest</div>
                 <img src="../outputs/plots/models/rf_confusion_matrix.png" alt="RF Confusion Matrix" class="plot-img">
-                <div class="img-caption">RF Confusion Matrix — Strong on Known Attacks</div>
+                <div class="img-caption" style="font-size: 0.65rem;">Precise but blind to zero-day</div>
             </div>
-            <div class="glass-card" style="padding: 16px;">
-                <div class="card-title" style="text-align: center; margin-bottom: 12px; color: var(--accent-orange);">One-Class SVM</div>
+            <div class="card" style="padding: 12px;">
+                <div class="card-title" style="text-align: center; margin-bottom: 8px; color: var(--accent-amber); font-size: 0.9rem;">One-Class SVM</div>
                 <img src="../outputs/plots/models/ocsvm_confusion_matrix.png" alt="OCSVM Confusion Matrix" class="plot-img">
-                <div class="img-caption">OCSVM Confusion Matrix — Zero-Day Detection</div>
+                <div class="img-caption" style="font-size: 0.65rem;">Detects novelty, high FP</div>
+            </div>
+            <div class="card" style="padding: 12px; border-top: 3px solid var(--accent-teal);">
+                <div class="card-title" style="text-align: center; margin-bottom: 8px; color: var(--accent-teal); font-size: 0.9rem;">Hybrid Model</div>
+                <img src="../outputs/plots/models/hybrid_confusion_matrix.png" alt="Hybrid Confusion Matrix" class="plot-img">
+                <div class="img-caption" style="font-size: 0.65rem;">Balanced adaptive defense</div>
             </div>
         </div>
 
-        <div class="card-grid card-grid-2" style="margin-top: 24px;">
-            <div class="glass-card" style="border-left: 3px solid var(--accent-cyan);">
-                <div class="card-title" style="color: var(--accent-cyan);">Random Forest Takeaway</div>
-                <div class="card-desc">
-                    Near-perfect precision and recall on seen attack types (DoS-Hulk). But conservative on zero-day attacks — tends to classify novel threats as benign because it has never learned their patterns.
+        <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px;">
+            <div class="card" style="border-left: 4px solid var(--accent-indigo); padding: 14px;">
+                <div class="card-title" style="color: var(--accent-indigo); font-size: 1rem;">Random Forest</div>
+                <div class="card-desc" style="font-size: 0.8rem;">
+                    <strong>Perfect precision</strong> on DoS-Hulk, but <strong>zero</strong> zero-day recall.
+                </div>
+                <div class="stat-row" style="margin-top: 10px; gap: 8px;">
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-indigo" style="font-size: 0.85rem;">1.0000</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Precision</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-coral" style="font-size: 0.85rem;">0.1782</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-coral" style="font-size: 0.85rem;">0.0000</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Z-Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-amber" style="font-size: 0.85rem;">0.3025</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">F1</div>
+                    </div>
                 </div>
             </div>
-            <div class="glass-card" style="border-left: 3px solid var(--accent-orange);">
-                <div class="card-title" style="color: var(--accent-orange);">One-Class SVM Takeaway</div>
-                <div class="card-desc">
-                    Catches anomalous behavior from novel attack families without ever seeing attack data in training. Trade-off: higher false positive rate on benign traffic, but recovers true zero-days that RF misses entirely.
+            <div class="card" style="border-left: 4px solid var(--accent-amber); padding: 14px;">
+                <div class="card-title" style="color: var(--accent-amber); font-size: 1rem;">One-Class SVM</div>
+                <div class="card-desc" style="font-size: 0.8rem;">
+                    Catches novel behavior, but trades off precision (more false alarms).
+                </div>
+                <div class="stat-row" style="margin-top: 10px; gap: 8px;">
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-amber" style="font-size: 0.85rem;">0.8557</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Precision</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-amber" style="font-size: 0.85rem;">0.1667</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-teal" style="font-size: 0.85rem;">0.1667</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Z-Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-amber" style="font-size: 0.85rem;">0.2791</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">F1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="border-left: 4px solid var(--accent-teal); padding: 14px; background: rgba(20, 184, 166, 0.03);">
+                <div class="card-title" style="color: var(--accent-teal); font-size: 1rem;">Hybrid Model</div>
+                <div class="card-desc" style="font-size: 0.8rem;">
+                    Balances known precision with unseen detection. <strong>Best F1-Score</strong>.
+                </div>
+                <div class="stat-row" style="margin-top: 10px; gap: 8px;">
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-teal" style="font-size: 0.85rem;">0.7609</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Precision</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-teal" style="font-size: 0.85rem;">0.3973</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-teal" style="font-size: 0.85rem;">0.2663</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">Z-Recall</div>
+                    </div>
+                    <div class="stat-pill" style="flex: 1; padding: 6px 4px;">
+                        <div class="stat-val gradient-teal" style="font-size: 0.85rem;">0.5220</div>
+                        <div class="stat-label" style="font-size: 0.55rem;">F1</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="glass-card" style="margin-top: 24px; text-align: center; padding: 24px; background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(179,136,255,0.06));">
-            <h2 style="font-size: 1.3rem; margin-bottom: 12px;">
-                🛡️ <span class="gradient-text">Key Insight</span>
-            </h2>
-            <div class="card-desc" style="max-width: 680px; margin: 0 auto; font-size: 0.95rem;">
-                Known-attack recognition and zero-day detection are fundamentally <strong>different tasks</strong>.
-                Adaptive cyber-physical defense needs <strong>both</strong> — a classifier for what you know,
-                and an anomaly detector for what you don't.
+        <div class="insight-box">
+            <h3>🛡️ <span class="gradient-indigo">Key Insights from the Data</span></h3>
+            <div class="card-desc" style="max-width: 720px; margin: 0 auto; font-size: 0.88rem; text-align: left; background: rgba(255, 255, 255, 0.5); padding: 18px 24px; border-radius: 12px; margin-top: 14px;">
+                <ul style="padding-left: 20px; margin: 0; line-height: 1.7;">
+                    <li style="margin-bottom: 8px;"><strong>Supervised Models fail on Novelty:</strong> Random Forest memorizes known attacks flawlessly (Precision: 1.0000) but is completely blind to novel threats (Zero-Day Recall: 0.0000).</li>
+                    <li style="margin-bottom: 8px;"><strong>Anomaly Detectors trade Precision for Discovery:</strong> One-Class SVM successfully catches brand-new zero-day attacks, but it produces more false alarms in the process.</li>
+                    <li><strong>The Hybrid Advantage:</strong> By processing traffic through both, the Hybrid model effectively doubles the system's reliability (F1-score jumps to 0.5220) and guarantees we aren't blind to the unknown.</li>
+                </ul>
             </div>
         </div>
     </div>
 </section>
 
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 9 — REFERENCES
+     ═══════════════════════════════════════════════════ -->
+<section class="slide" id="slide-9">
+    <div class="slide-inner reveal">
+        <div class="slide-badge badge-neutral">References</div>
+        <h2>Academic <span class="gradient-indigo">sources.</span></h2>
+
+        <ul class="ref-list">
+            <li>
+                <span class="ref-title">ML Project Resources Referred</span>
+                <br><a href="https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=934769" target="_blank" class="ref-detail" style="color: var(--accent-indigo); text-decoration: none; word-break: break-all; display: inline-block; margin-top: 6px;">https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=934769</a>
+            </li>
+            <li>
+                <span class="ref-title">Initial Datasets Evaluated</span>
+                <br><a href="https://www.unb.ca/cic/datasets/ids-2017.html" target="_blank" class="ref-detail" style="color: var(--accent-indigo); text-decoration: none; word-break: break-all; display: block; margin-top: 6px;">https://www.unb.ca/cic/datasets/ids-2017.html</a>
+                <a href="https://www.kaggle.com/datasets/hassan06/nslkdd" target="_blank" class="ref-detail" style="color: var(--accent-indigo); text-decoration: none; word-break: break-all; display: block; margin-top: 2px;">https://www.kaggle.com/datasets/hassan06/nslkdd</a>
+            </li>
+            <li>
+                <span class="ref-title">Final Dataset (CIC-IDS-2018)</span>
+                <br><a href="https://www.unb.ca/cic/datasets/ids-2018.html" target="_blank" class="ref-detail" style="color: var(--accent-indigo); text-decoration: none; word-break: break-all; display: block; margin-top: 6px;">https://www.unb.ca/cic/datasets/ids-2018.html</a>
+                <a href="https://www.kaggle.com/datasets/primus11/cic-ids-2018-dataset" target="_blank" class="ref-detail" style="color: var(--accent-indigo); text-decoration: none; word-break: break-all; display: block; margin-top: 2px;">https://www.kaggle.com/datasets/primus11/cic-ids-2018-dataset</a>
+            </li>
+        </ul>
+    </div>
+</section>
+
+
 <!-- Footer -->
 <div class="footer">
-    Adaptive Cyber-Physical Security &nbsp;·&nbsp; CIC-IDS-2018 &nbsp;·&nbsp; Phase 1
+    Adaptive Cyber-Physical Security &nbsp;·&nbsp; CIC-IDS-2018 &nbsp;·&nbsp; Pugazhendhi J &amp; Dally R &nbsp;·&nbsp; Rishihood University
 </div>
 
 <!-- ═══════════════════════════════════════════════════
