@@ -119,8 +119,8 @@ Adaptive_Cyber_Physical_Security/
 │   ├── 📂 feature_engineering/
 │   │   └── fe_cic18.ipynb                #   Feature selection & engineering
 │   └── 📂 models/
-│       ├── rf_model.py                   #   Random Forest (zero-day split)
-│       ├── ocsvm_model.py                #   One-Class SVM (benign-only)
+│       ├── rf_model.ipynb                #   Random Forest (zero-day split)
+│       ├── ocsvm_model.ipynb             #   One-Class SVM (benign-only)
 │       ├── hybrid_model.py               #   Hybrid RF + OCSVM (OR-fusion)
 │       └── autoencoder_model.ipynb       #   Deep Autoencoder anomaly detector
 │
@@ -133,9 +133,12 @@ Adaptive_Cyber_Physical_Security/
 ├── 📂 outputs/plots/                     # All generated visualizations
 │   ├── 📂 eda/                           #   Label distribution, histograms, heatmaps
 │   ├── 📂 feature_engineering/           #   Post-cleaning distributions & correlations
-│   └── 📂 models/                        #   Confusion matrices (RF, OCSVM, Hybrid)
+│   └── 📂 models/                        #   Model outputs & visualizations
+│       ├── 📂 rf_output/                 #   RF curves and confusion matrix
+│       ├── 📂 ocsvm_output/              #   OCSVM curves, scores, and matrix
 │       └── 📂 autoencoder_output/        #   AE: ROC, PR, threshold, per-attack, etc.
 │
+├── comparison.html                       #   Interactive model comparison report
 ├── 📂 docs/                              # Project documentation
 │   ├── literature_review.md              #   7-section literature survey
 │   ├── data_dictionary.md                #   Full column-level data dictionary
@@ -144,11 +147,12 @@ Adaptive_Cyber_Physical_Security/
 │
 ├── 📂 report/                            # Written deliverables
 │   ├── Phase1_report.pdf                 #   Phase 1 compiled report
+│   ├── Phase_2_report.pdf                #   Phase 2 compiled report
 │   └── 📂 latex/
 │       ├── main.tex                      #   Phase 1 LaTeX source
 │       ├── references.bib                #   Phase 1 bibliography
 │       ├── phase2_main.tex               #   Phase 2 LaTeX source
-│       └── phase2_references.bib         #   Phase 2 bibliography (13 refs)
+│       └── phase2_references.bib         #   Phase 2 bibliography
 │
 ├── 📂 presentation/                      # Presentation materials
 │   ├── index.html                        #   Interactive slide deck
@@ -201,12 +205,10 @@ jupyter notebook experiments/feature_engineering/fe_cic18.ipynb
 ### Step 3 — Train & Evaluate Models
 
 ```bash
-# Phase 1 baselines
-python experiments/models/rf_model.py        # Random Forest
-python experiments/models/ocsvm_model.py     # One-Class SVM
-
-# Phase 2 extensions
-python experiments/models/hybrid_model.py    # Hybrid (RF + OCSVM)
+# Train & Evaluate Models (Jupyter Notebooks & Scripts)
+jupyter notebook experiments/models/rf_model.ipynb           # Random Forest
+jupyter notebook experiments/models/ocsvm_model.ipynb        # One-Class SVM
+python experiments/models/hybrid_model.py                    # Hybrid (RF + OCSVM)
 jupyter notebook experiments/models/autoencoder_model.ipynb  # Autoencoder
 ```
 
@@ -282,8 +284,11 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 ### Models
 | Plot | File |
 |:-----|:-----|
-| RF confusion matrix | `outputs/plots/models/rf_confusion_matrix.png` |
-| OCSVM confusion matrix | `outputs/plots/models/ocsvm_confusion_matrix.png` |
+| RF curves | `outputs/plots/models/rf_output/rf_curves.png` |
+| RF confusion matrix | `outputs/plots/models/rf_output/rf_confusion_matrix.png` |
+| OCSVM curves | `outputs/plots/models/ocsvm_output/ocsvm_curves.png` |
+| OCSVM score distribution | `outputs/plots/models/ocsvm_output/ocsvm_score_dist.png` |
+| OCSVM confusion matrix | `outputs/plots/models/ocsvm_output/ocsvm_confusion_matrix.png` |
 | Hybrid confusion matrix | `outputs/plots/models/hybrid_confusion_matrix.png` |
 
 ### Autoencoder Diagnostics
@@ -304,8 +309,10 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | Deliverable | Location | Notes |
 |:------------|:---------|:------|
 | Phase 1 Report (PDF) | `report/Phase1_report.pdf` | Compiled IEEE-format report |
+| **Phase 2 Report (PDF)** | `report/Phase_2_report.pdf` | **Final Compiled Phase 2 IEEE-format report** |
 | Phase 1 LaTeX | `report/latex/main.tex` | Source + `references.bib` |
-| **Phase 2 LaTeX** | `report/latex/phase2_main.tex` | Source + `phase2_references.bib` |
+| Phase 2 LaTeX | `report/latex/phase2_main.tex` | Source + `phase2_references.bib` |
+| Model Comparison | `comparison.html` | Open in browser for full detailed outputs |
 | Interactive Presentation | `presentation/index.html` | Open in browser |
 | HTML Presentation | `presentation/presentation.html` | Alternative format |
 | Slide PDF | `presentation/index.pdf` | PDF export |
