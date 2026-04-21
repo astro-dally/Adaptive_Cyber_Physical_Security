@@ -20,56 +20,9 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 
 ## 🏗️ System Architecture
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                    ADAPTIVE CYBER-PHYSICAL IDS                       │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│   ┌─────────────┐    ┌───────────────────────────────────────────┐   │
-│   │  RAW DATA   │    │          PREPROCESSING PIPELINE           │   │
-│   │ CIC-IDS-2018│───▶│  ID Removal → Coercion → Imputation →    │   │
-│   │ Daily CSVs  │    │  Label Norm → Const Drop → Corr Prune    │   │
-│   └─────────────┘    └──────────────────┬────────────────────────┘   │
-│                                         │                            │
-│                                         ▼                            │
-│                          ┌──────────────────────────┐                │
-│                          │   PROCESSED DATASET       │                │
-│                          │   8.2M flows × 49 feats   │                │
-│                          └──────────┬───────────────┘                │
-│                                     │                                │
-│             ┌───────────────────────┼───────────────────────┐        │
-│             │                       │                       │        │
-│             ▼                       ▼                       ▼        │
-│   ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐  │
-│   │   TIER 1: RF    │   │  TIER 2: OCSVM  │   │ TIER 3: AUTO-   │  │
-│   │  ─────────────  │   │  ─────────────  │   │   ENCODER       │  │
-│   │  Supervised     │   │  Kernel Anomaly │   │  ─────────────  │  │
-│   │  100 trees      │   │  RBF, ν=0.05   │   │  Deep Anomaly   │  │
-│   │  Known attacks  │   │  Benign-only    │   │  49→32→16→8→    │  │
-│   │  with zero-day  │   │  training       │   │  16→32→49       │  │
-│   │  split eval     │   │                 │   │  MSE scoring    │  │
-│   └────────┬────────┘   └────────┬────────┘   └────────┬────────┘  │
-│            │                     │                      │           │
-│            │     ┌───────────────┘                      │           │
-│            ▼     ▼                                      ▼           │
-│   ┌─────────────────────┐              ┌────────────────────────┐   │
-│   │  TIER 4: HYBRID     │              │   ANOMALY DIAGNOSTICS  │   │
-│   │  ─────────────────  │              │   ──────────────────── │   │
-│   │  OR-Logic Fusion    │              │   ROC / PR Curves      │   │
-│   │  RF ∨ OCSVM         │              │   Threshold Tuning     │   │
-│   │  Max recall with    │              │   Per-Attack Rates     │   │
-│   │  precision trade    │              │   Error Histograms     │   │
-│   └────────┬────────────┘              └────────────────────────┘   │
-│            │                                                        │
-│            ▼                                                        │
-│   ┌─────────────────────────────────────────────────────────────┐   │
-│   │                    EVALUATION ENGINE                         │   │
-│   │  Accuracy · Precision · Recall · F1 · Zero-Day Recall       │   │
-│   │  ROC-AUC · PR-AUC · Confusion Matrices · Per-Attack Recall  │   │
-│   └─────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="adaptive_cyber_physical_ids_architecture.svg" alt="Adaptive Cyber-Physical IDS System Architecture" width="100%" />
+</p>
 
 ### Data Flow
 
