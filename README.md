@@ -302,6 +302,17 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | Confusion matrix | `outputs/plots/models/autoencoder_output/plot_confusion_matrix.png` |
 | Per-attack detection | `outputs/plots/models/autoencoder_output/plot_per_attack_detection.png` |
 
+### 🖼️ Key Evidence Visualized
+
+<p align="center">
+  <img src="outputs/plots/models/hybrid_confusion_matrix.png" width="48%" alt="Hybrid Model Confusion Matrix" />
+  <img src="outputs/plots/models/autoencoder_output/plot_roc_curve.png" width="48%" alt="Autoencoder ROC Curve" />
+</p>
+<p align="center">
+  <img src="outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png" width="48%" alt="Threshold Sensitivity" />
+  <img src="outputs/plots/models/autoencoder_output/plot_per_attack_detection.png" width="48%" alt="Per-Attack Detection Rate" />
+</p>
+
 ---
 
 ## 📄 Reports & Deliverables
