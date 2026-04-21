@@ -26,17 +26,9 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 
 ### Data Flow
 
-```
-Raw CSVs ──▶ full_preprocessing.py ──▶ cic18_full_processed.csv
-                                              │
-                    ┌─────────────────────────┼──────────────────────────┐
-                    │                         │                          │
-              EDA Notebook            FE Notebook               Model Scripts
-           (eda_cic18.ipynb)      (fe_cic18.ipynb)          (rf / ocsvm / hybrid
-                    │                     │                  / autoencoder)
-                    ▼                     ▼                          │
-             outputs/plots/eda    outputs/plots/fe           outputs/plots/models
-```
+<p align="center">
+  <img src="cic18_project_pipeline.svg" alt="Project Data Flow Pipeline" width="100%" />
+</p>
 
 ---
 
