@@ -13,8 +13,6 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{float}
-\usepackage{caption}
-\captionsetup{font=small, skip=3pt}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{cite}
@@ -33,15 +31,6 @@
 
 % ---- Graphics path (set relative to where you compile from) ----
 \graphicspath{{../../}}  % adjust if compiling from report/latex/
-
-% ---- Tighten float/caption spacing ----
-\setlength{\floatsep}{4pt plus 1pt minus 1pt}
-\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
-\setlength{\intextsep}{4pt plus 1pt minus 1pt}
-\setlength{\dblfloatsep}{4pt plus 1pt minus 1pt}
-\setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
-\setlength{\abovecaptionskip}{3pt}
-\setlength{\belowcaptionskip}{1pt}
 
 % ---- Title ----
 \title{Adaptive Cyber-Physical Security:\\Phase-2 Project Report — Hybrid Deep-Learning\\Intrusion Detection with Zero-Day Generalization}
@@ -163,7 +152,7 @@ In Phase~2, we operate on the \emph{fully processed} dataset
 
 Table~\ref{tab:full_dist} presents the complete class distribution.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Full CIC-IDS-2018 processed dataset class distribution}
 \label{tab:full_dist}
@@ -228,7 +217,7 @@ raw daily CSV files:
 Table~\ref{tab:features} lists a representative selection of the 49
 retained numeric predictors with their semantics.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Representative subset of retained features after preprocessing}
 \label{tab:features}
@@ -372,7 +361,7 @@ correlation-pruned 49-dimensional feature space.
 
 The Autoencoder implements a symmetric encoder-decoder stack:
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Autoencoder layer architecture}
 \label{tab:ae_arch}
@@ -448,7 +437,7 @@ Two complementary evaluation protocols are used:
 
 \subsection{Hyperparameters Summary}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Key hyperparameters across all models}
 \label{tab:hyperparams}
@@ -520,7 +509,7 @@ Additionally the Autoencoder is evaluated via:
 
 Table~\ref{tab:phase1recap} summarises Phase~1 results for reference.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Phase~1 baseline results (CIC-IDS-2018 subset, 2.1~M flows)}
 \label{tab:phase1recap}
@@ -538,7 +527,7 @@ One-Class SVM & ---    & 0.907 & 0.145 & 0.249 & 0.145 \\
 
 \textbf{Random Forest} on the full dataset (zero-day split):
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Random Forest — Phase~2 (full dataset)}
 \label{tab:rf_p2}
@@ -561,7 +550,7 @@ classifier—the defining limitation this phase intends to overcome.
 
 \textbf{One-Class SVM} on the full dataset (benign-only training):
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{One-Class SVM — Phase~2 (full dataset)}
 \label{tab:ocsvm_p2}
@@ -584,7 +573,7 @@ split as the RF. Because the OR combiner activates on \emph{any}
 positive signal from either model, zero-day recall is guaranteed to
 be at least as high as the best individual component.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Hybrid Model (RF + OCSVM OR-fusion) — Phase~2}
 \label{tab:hybrid_p2}
@@ -611,7 +600,7 @@ strictly increases relative to any constituent.
 The Autoencoder is evaluated through multiple diagnostic lenses
 (Figures~\ref{fig:ae_train}--\ref{fig:ae_patk}).
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Autoencoder anomaly detection summary — Phase~2}
 \label{tab:ae_p2}
@@ -633,7 +622,7 @@ Optimal threshold $\tau$   & Tuned via sensitivity curve \\
 Table~\ref{tab:comparison} presents a unified comparison across all
 Phase~1 and Phase~2 models.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Phase~1 vs Phase~2 — comprehensive model comparison}
 \label{tab:comparison}
@@ -725,7 +714,7 @@ Benign traffic accounts for $\approx73.8\%$ of the full processed
 dataset, reinforcing the need for precision/recall as primary metrics
 over raw accuracy \cite{chandola2009}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{outputs/plots/eda/label_distribution.png}
 \caption{Class distribution in the full processed CIC-IDS-2018 dataset.
@@ -734,7 +723,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:eda_labels}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/eda/feature_histograms.png}
 \caption{Representative feature histograms (pre-cleaning) showing
@@ -743,7 +732,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:eda_hist}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/eda/correlation_heatmap.png}
 \caption{Pearson correlation heatmap of raw features before reduction.
@@ -754,7 +743,7 @@ over raw accuracy \cite{chandola2009}.
 
 \subsection{Feature Engineering}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/feature_engineering/clean_feature_histograms.png}
 \caption{Feature distributions after cleaning and correlation-based
@@ -763,7 +752,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:fe_hist}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/feature_engineering/clean_correlation_heatmap.png}
 \caption{Correlation heatmap after feature reduction. The dense
@@ -774,7 +763,7 @@ over raw accuracy \cite{chandola2009}.
 
 \subsection{Phase-1 Baseline Confusion Matrices}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.82\linewidth]{outputs/plots/models/rf_confusion_matrix.png}
 \caption{Random Forest confusion matrix (Phase~1 / Phase~2 baseline).
@@ -783,7 +772,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:rf_cm}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.82\linewidth]{outputs/plots/models/ocsvm_confusion_matrix.png}
 \caption{One-Class SVM confusion matrix. Non-zero detections on unseen
@@ -795,7 +784,7 @@ over raw accuracy \cite{chandola2009}.
 
 \subsection{Phase-2 Hybrid Confusion Matrix}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.82\linewidth]{outputs/plots/models/hybrid_confusion_matrix.png}
 \caption{Hybrid model (RF~+~OCSVM, OR-fusion) confusion matrix.
@@ -807,7 +796,7 @@ over raw accuracy \cite{chandola2009}.
 
 \subsection{Autoencoder Diagnostics}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_training_history.png}
 \caption{Autoencoder training history: Mean Squared Error loss on
@@ -816,7 +805,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_train}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_error_histogram.png}
 \caption{Reconstruction error (MSE) distribution for benign and attack
@@ -825,7 +814,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_error}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_roc_curve.png}
 \caption{Autoencoder ROC curve. The area under the curve ($>0.90$)
@@ -834,7 +823,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_roc}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_pr_curve.png}
 \caption{Autoencoder Precision-Recall curve. PR-AUC above 0.85 under
@@ -843,7 +832,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_pr}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png}
 \caption{Threshold sensitivity analysis: precision, recall, and F1-score
@@ -853,7 +842,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_thresh}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_confusion_matrix.png}
 \caption{Autoencoder confusion matrix at the optimal $\tau$ (maximizing
@@ -862,7 +851,7 @@ over raw accuracy \cite{chandola2009}.
 \label{fig:ae_cm}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{outputs/plots/models/autoencoder_output/plot_per_attack_detection.png}
 \caption{Per-attack-family detection rate of the Autoencoder. High-volume
