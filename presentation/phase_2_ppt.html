@@ -36,9 +36,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
   scroll-snap-align:start;
   display:flex;align-items:center;justify-content:center;
   position:relative;overflow:hidden;
-  padding:44px 60px;
+  padding:28px 60px;
 }
-.inner{max-width:1100px;width:100%;position:relative;z-index:1}
+.inner{max-width:1180px;width:100%;position:relative;z-index:1; padding: 10px 0;}
 .snum{
   position:absolute;top:24px;right:36px;
   font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:2px;
@@ -47,49 +47,49 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
 /* ===== TYPOGRAPHY ===== */
 .tag{
   font-family:var(--mono);font-size:10px;text-transform:uppercase;
-  letter-spacing:4px;color:var(--pop);margin-bottom:8px;font-weight:700;
+  letter-spacing:4px;color:var(--pop);margin-bottom:10px;font-weight:700;
 }
-.big{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:10px;color:var(--dark)}
+.big{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.15;margin-bottom:10px;color:var(--dark)}
 .big .grad{
   background:linear-gradient(135deg,var(--pop),var(--sky));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.sub{font-size:clamp(.88rem,1.4vw,1.02rem);color:var(--gray);line-height:1.65;max-width:640px}
+.sub{font-size:clamp(.92rem,1.5vw,1.08rem);color:var(--gray);line-height:1.65;max-width:680px}
 .sub b{color:var(--dark);font-weight:600}
 
 /* ===== LAYOUTS ===== */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
-.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-.four{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
 
 /* ===== PILL ===== */
 .pill{
   background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:22px 18px;text-align:center;
+  border-radius:14px;padding:24px 20px;text-align:center;
   box-shadow:var(--shadow);transition:.3s ease;
 }
 .pill:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.pill .val{font-family:var(--mono);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;margin-bottom:4px}
-.pill .lbl{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:2px}
+.pill .val{font-family:var(--mono);font-size:clamp(1.8rem,2.8vw,2.2rem);font-weight:700;margin-bottom:4px}
+.pill .lbl{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:2px}
 
 /* ===== CARD ===== */
 .card{
   background:var(--card);border:1px solid var(--border);
-  border-radius:12px;padding:22px 24px;box-shadow:var(--shadow);
+  border-radius:12px;padding:24px 28px;box-shadow:var(--shadow);
 }
-.card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;color:var(--dark);display:flex;align-items:center;gap:8px}
-.card h3 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.card h3{font-size:1rem;font-weight:700;margin-bottom:10px;color:var(--dark);display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
 .card ul{list-style:none;padding:0}
-.card li{font-size:.84rem;color:var(--gray);line-height:1.65;padding-left:18px;position:relative;margin-bottom:3px}
-.card li::before{content:'→';position:absolute;left:0;color:var(--pop2);font-weight:700;font-size:.75rem}
-.card p{font-size:.84rem;color:var(--gray);line-height:1.65}
+.card li{font-size:.92rem;color:var(--gray);line-height:1.65;padding-left:20px;position:relative;margin-bottom:4px}
+.card li::before{content:'→';position:absolute;left:0;color:var(--pop2);font-weight:700;font-size:.8rem}
+.card p{font-size:.92rem;color:var(--gray);line-height:1.65}
 
 /* ===== VGG-STYLE ARCHITECTURE ===== */
 .vgg{display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:4px 0}
 .vgg-col{display:flex;flex-direction:column;align-items:center;gap:3px}
 .vgg-block{
-  width:64px;border-radius:6px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:.7rem;font-weight:700;color:#fff;
+  width:88px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.85rem;font-weight:700;color:#fff;
   transition:.3s ease;letter-spacing:.5px;
 }
 .vgg-block:hover{transform:scaleY(1.05);filter:brightness(1.1)}
@@ -109,15 +109,41 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
 .vgg-legend i{width:20px;height:8px;border-radius:3px;display:inline-block}
 
 /* ===== TABLE ===== */
-.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem}
 .tbl th{
-  text-align:left;padding:8px 12px;font-family:var(--mono);font-size:.62rem;
-  text-transform:uppercase;letter-spacing:2px;color:var(--pop);
+  text-align:left;padding:8px 12px;font-family:var(--mono);font-size:.68rem;
+  text-transform:uppercase;letter-spacing:1.5px;color:var(--pop);
   border-bottom:2px solid var(--border);background:var(--bg);
 }
-.tbl td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--gray)}
+.tbl td{padding:6px 12px;border-bottom:1px solid var(--border);color:var(--gray)}
 .tbl tr:hover td{background:rgba(91,76,219,.03)}
 .tbl code{font-family:var(--mono);font-size:.78em;color:var(--pop2)}
+
+/* ===== IMAGES ===== */
+.slide-img{max-height:300px; width:auto; max-width:100%; object-fit:contain; border-radius:10px; display:block; margin:0 auto; cursor:zoom-in; transition:.3s ease;}
+.slide-img-sm{max-height:220px; width:auto; max-width:100%; object-fit:contain; border-radius:8px; display:block; margin:0 auto; cursor:zoom-in; transition:.3s ease;}
+.slide-img:hover, .slide-img-sm:hover{transform:scale(1.02); box-shadow:var(--shadow-lg);}
+
+/* ===== LIGHTBOX ===== */
+#vbox{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(10,12,20,.95);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .4s ease;
+  padding:40px;
+}
+#vbox.on{opacity:1;pointer-events:all}
+#vbox img{
+  max-width:95%;max-height:95%;object-fit:contain;
+  transform:scale(.9);transition:transform .4s cubic-bezier(.16,1,.3,1);
+  border-radius:12px;box-shadow:0 0 60px rgba(0,0,0,.5);
+}
+#vbox.on img{transform:scale(1)}
+#vbox .close{
+  position:absolute;top:30px;right:40px;color:#fff;
+  font-size:2rem;cursor:pointer;opacity:.6;transition:.3s;
+}
+#vbox .close:hover{opacity:1;transform:rotate(90deg)}
 
 /* ===== BADGES ===== */
 .b{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.62rem;font-weight:700;letter-spacing:.5px}
@@ -443,15 +469,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
         <tr><td><b>Batch Size</b></td><td>512</td></tr>
       </table>
     </div>
-    <div class="card">
-      <h3><span class="dot" style="background:var(--mint)"></span>Why Self-Supervised?</h3>
-      <ul>
-        <li>Input == Target → learns to reconstruct normal traffic</li>
-        <li>No attack labels needed during training</li>
-        <li>Any new/unseen attack naturally produces high error</li>
-        <li>Threshold set at <b>P99</b> of benign reconstruction error</li>
-        <li>Adjustable at deploy time without retraining</li>
-      </ul>
+    <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px;">
+      <h3 style="width:100%;"><span class="dot" style="background:var(--mint)"></span>Loss Convergence</h3>
+      <img src="../outputs/plots/models/autoencoder_output/plot_training_history.png" class="slide-img" alt="Training History">
     </div>
   </div>
 </div>
@@ -469,7 +489,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     <div class="pill"><div class="val" style="color:var(--sun)">0.98%</div><div class="lbl">False Pos Rate</div></div>
     <div class="pill"><div class="val" style="color:var(--coral)">1.7%</div><div class="lbl">Recall @ P99</div></div>
   </div>
-  <div class="two">
+  <div class="two" style="gap:20px;">
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="card" style="padding:10px;">
+        <img src="../outputs/plots/models/autoencoder_output/plot_roc_curve.png" class="slide-img" alt="ROC Curve">
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <div class="card" style="padding:10px;">
+        <img src="../outputs/plots/models/autoencoder_output/plot_pr_curve.png" class="slide-img" alt="PR Curve">
+      </div>
+    </div>
+  </div>
+  <div class="two" style="margin-top:20px;">
     <div class="card">
       <h3><span class="dot" style="background:var(--sky)"></span>Confusion Matrix</h3>
       <table class="tbl">
@@ -520,12 +552,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
       </tbody>
     </table>
   </div>
-  <div class="two" style="margin-top:14px">
-    <div class="cta" style="margin:0;border-color:var(--mint);background:linear-gradient(135deg,#e6f7f0,#f7f8fc)">
-      <p><b>Catchable attacks:</b> LOIC-UDP (100%), Slowloris (73.6%), GoldenEye (20.3%) — high reconstruction error, clearly deviate from normal flow patterns. HOIC &amp; SSH also catchable if threshold is lowered to P95.</p>
+  <div class="two" style="margin-top:14px; grid-template-columns: 1.8fr 1fr; align-items: stretch; gap: 16px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="card" style="padding:8px;">
+        <img src="../outputs/plots/models/autoencoder_output/plot_per_attack_detection.png" class="slide-img-sm" style="max-height:140px;" alt="Per-Attack Detection">
+      </div>
     </div>
-    <div class="cta" style="margin:0;border-color:var(--coral);background:linear-gradient(135deg,#fce8e8,#f7f8fc)">
-      <p><b>True stealth attacks:</b> Bot (error=0.13 ≈ benign 0.08), Infiltration (error=0.09), LOIC-HTTP, Hulk — statistically indistinguishable from normal at any reasonable threshold. Need temporal aggregation or complementary models.</p>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="cta" style="margin:0; border-color:var(--mint); background:linear-gradient(135deg,#e6f7f0,#f7f8fc); height:100%;">
+        <p><b>Catchable:</b> LOIC-UDP (100%) and Slowloris (73.6%) clearly deviate from normal manifold. SSH also catchable at lower P95/P90 thresholds.</p>
+      </div>
+      <div class="cta" style="margin:0; border-color:var(--coral); background:linear-gradient(135deg,#fce8e8,#f7f8fc); height:100%;">
+        <p><b>Stealth:</b> Bot and Infiltration mimic normal traffic so closely that error stays below P99. Need hybrid Tier 1/2 models.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -538,30 +577,40 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
   <div class="tag">Failure Analysis</div>
   <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Why <span class="grad">98.3% of Attacks</span> Were Missed</h2>
   <p class="sub" style="margin-bottom:16px">At P99 threshold: 1,144,086 attacks missed. Five distinct root causes — each requiring a different architectural fix.</p>
-  <div class="three">
-    <div class="card" style="border-top:3px solid var(--coral)">
-      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--coral)"></span>1. Stateless Analysis</h3>
-      <p style="font-size:.78rem">Each flow scored <b>independently</b>. SSH brute force only reveals itself across thousands of attempts—invisible flow-by-flow. Fix: sliding window aggregation.</p>
+  <div class="three" style="gap: 32px; margin-bottom: 24px;">
+    <div class="card" style="border-top:3px solid var(--coral); height: 100%;">
+      <h3 style="font-size: 1rem;"><span class="dot" style="background:var(--coral)"></span>1. Stateless Analysis</h3>
+      <p style="font-size: .88rem;">Each flow scored <b>independently</b>. SSH brute force only reveals itself across thousands of attempts—invisible flow-by-flow. Fix: sliding window aggregation.</p>
     </div>
-    <div class="card" style="border-top:3px solid var(--sun)">
-      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--sun)"></span>2. Protocol Camouflage</h3>
-      <p style="font-size:.78rem">HTTP-based attacks (HOIC, LOIC-HTTP, Bot) use <b>normal HTTP protocol</b>. Flow stats look like browser traffic. Error 0.13–0.43 vs benign 0.08.</p>
+    <div class="card" style="border-top:3px solid var(--sun); height: 100%;">
+      <h3 style="font-size: 1rem;"><span class="dot" style="background:var(--sun)"></span>2. Protocol Camouflage</h3>
+      <p style="font-size: .88rem;">HTTP-based attacks (HOIC, LOIC-HTTP, Bot) use <b>normal HTTP protocol</b>. Flow stats look like browser traffic. Error 0.13–0.43 vs benign 0.08.</p>
     </div>
-    <div class="card" style="border-top:3px solid var(--sky)">
-      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--sky)"></span>3. Conservative Threshold</h3>
-      <p style="font-size:.78rem">P99 keeps FPR ≤ 1% (Anti-Alert Fatigue). At <b>P90: recall = 70.5%</b> · F1 = 0.749. The model ranks attacks correctly—threshold is the gating factor.</p>
+    <div class="card" style="border-top:3px solid var(--sky); height: 100%;">
+      <h3 style="font-size: 1rem;"><span class="dot" style="background:var(--sky)"></span>3. Conservative Threshold</h3>
+      <p style="font-size: .88rem;">P99 keeps FPR ≤ 1% (Anti-Alert Fatigue). At <b>P90: recall = 70.5%</b> · F1 = 0.749. The model ranks attacks correctly—threshold is the gating factor.</p>
     </div>
-    <div class="card" style="border-top:3px solid var(--pop)">
-      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--pop)"></span>4. Adversarial Design</h3>
-      <p style="font-size:.78rem">Bot malware error = <b>0.127 ≈ benign 0.081</b>. Built specifically to mimic normal traffic. 7.5% of attacks score below the benign mean entirely.</p>
+    <div class="card" style="border-top:3px solid var(--pop); height: 100%;">
+      <h3 style="font-size: 1rem;"><span class="dot" style="background:var(--pop)"></span>4. Adversarial Design</h3>
+      <p style="font-size: .88rem;">Bot malware error = <b>0.127 ≈ benign 0.081</b>. Built specifically to mimic normal traffic. 7.5% of attacks score below the benign mean entirely.</p>
     </div>
-    <div class="card" style="border-top:3px solid var(--mint)">
-      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--mint)"></span>5. Volume vs. Flow</h3>
-      <p style="font-size:.78rem">DDoS is dangerous due to <b>aggregate volume</b>. Our model sees one packet at a time, not the massive wave. Fix: Network-level flow frequency sensors.</p>
+    <div class="card" style="border-top:3px solid var(--mint); height: 100%;">
+      <h3 style="font-size: 1rem;"><span class="dot" style="background:var(--mint)"></span>5. Volume vs. Flow</h3>
+      <p style="font-size: .88rem;">DDoS is dangerous due to <b>aggregate volume</b>. Our model sees one packet at a time, not the massive wave. Fix: Network-level flow frequency sensors.</p>
+    </div>
+  </div>
+  <div class="three" style="margin-bottom:8px; gap: 24px;">
+    <div class="card" style="padding:14px; grid-column: span 2;">
+       <h3 style="font-size: 1rem; margin-bottom: 6px;"><span class="dot" style="background:var(--sky)"></span>Benign vs. Attack Error Overlap</h3>
+       <img src="../outputs/plots/models/autoencoder_output/plot_error_histogram.png" class="slide-img-sm" style="max-height: 140px;" alt="Error Overlap Histogram">
+    </div>
+    <div class="card" style="padding:14px;">
+       <h3 style="font-size: 1rem; margin-bottom: 6px;"><span class="dot" style="background:var(--sun)"></span>Threshold Sensitivity</h3>
+       <img src="../outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png" class="slide-img-sm" style="max-height: 140px;" alt="Threshold Sensitivity">
     </div>
   </div>
   <div class="cta" style="margin-top:14px">
-    <p><b>Key insight:</b> The model <em>does</em> score most attacks higher than benign (4.3× separation) — but 98.3% still fall below the P99 line. Choosing P90 would catch 70.5% of attacks. The right threshold depends on the SOC's analyst capacity.</p>
+    <p><b>Key insight:</b> Most attacks are scored higher than benign (4.3× separation) but still fall below the strict P99 line. Lowering to P90 would catch >70% of threats.</p>
   </div>
 </div>
 <div class="snum">09 / 11</div>
@@ -643,13 +692,30 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
 <div class="snum">11 / 11</div>
 </section>
 
+<div id="vbox" onclick="this.classList.remove('on')">
+  <span class="close">&times;</span>
+  <img src="" alt="Viewer">
+</div>
+
 <script>
 const N=11;
 const nav=document.getElementById('nav');
 for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='nd'+(i===1?' on':'');d.onclick=()=>document.getElementById('s'+i).scrollIntoView({behavior:'smooth'});nav.appendChild(d)}
 const dots=[...nav.children],slides=[...document.querySelectorAll('.slide')];
 new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const i=slides.indexOf(e.target);dots.forEach(d=>d.classList.remove('on'));if(dots[i])dots[i].classList.add('on')}})},{threshold:.5}).observe&&slides.forEach(s=>new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const i=slides.indexOf(e.target);dots.forEach(d=>d.classList.remove('on'));if(dots[i])dots[i].classList.add('on')}})},{threshold:.5}).observe(s));
-document.addEventListener('keydown',e=>{const ci=dots.findIndex(d=>d.classList.contains('on'));if(['ArrowDown','ArrowRight',' '].includes(e.key)){e.preventDefault();slides[Math.min(ci+1,N-1)].scrollIntoView({behavior:'smooth'})}else if(['ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();slides[Math.max(ci-1,0)].scrollIntoView({behavior:'smooth'})}});
+document.addEventListener('keydown',e=>{const ci=dots.findIndex(d=>d.classList.contains('on'));if(['ArrowDown','ArrowRight',' '].includes(e.key)){e.preventDefault();slides[Math.min(ci+1,N-1)].scrollIntoView({behavior:'smooth'})}else if(['ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();slides[Math.max(ci-1,0)].scrollIntoView({behavior:'smooth'})}else if(e.key==='Escape'){document.getElementById('vbox').classList.remove('on')}});
+
+// Lightbox Logic
+const vbox = document.getElementById('vbox');
+const vi = vbox.querySelector('img');
+document.querySelectorAll('img').forEach(im => {
+  if(im.parentElement.id === 'vbox') return;
+  im.onclick = (e) => {
+    e.stopPropagation();
+    vi.src = im.src;
+    vbox.classList.add('on');
+  };
+});
 </script>
 </body>
 </html>
