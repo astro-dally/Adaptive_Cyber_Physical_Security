@@ -1,139 +1,93 @@
-# Phase 2: Deep Autoencoder Presentation Guide
+# Phase 2: Autoencoder Execution & Failure Analysis Guide
 
-This guide is designed to help you present the Phase 2 Deep Autoencoder architecture for your oral presentation. It includes plain-English explanations of the slides, the actual code blocks representing the core logic, and a troubleshooting guide for identifying failure cases (False Positives and False Negatives) using the existing cached data on your AWS instance.
-
----
-
-## 1. Explaining the Architecture (Slide 4)
-
-**What to say:**
-> "Our autoencoder uses a deep, symmetric design. We take the 68 input features and immediately expand them to 128 dimensions. This 'expansion' step allows the network to learn rich, non-linear interactions between network features. We then compress the data down through a 64-dimension layer into a tight 32-dimension bottleneck. This 53% compression forces the network to drop noise and only memorize the essential 'manifold' of normal, benign traffic. Because we use Batch Normalization at every layer, the gradients are stable, and Dropout in the encoder prevents the model from simply memorizing the training data."
-
-**The Code Implementation:**
-If you need to show or explain the keras code used for this architecture:
-
-```python
-from tensorflow.keras.layers import Input, Dense, BatchNormalization, Dropout
-from tensorflow.keras.models import Model
-
-def build_autoencoder(input_dim=68, bottleneck_dim=32):
-    inputs = Input(shape=(input_dim,))
-    
-    # ─── ENCODER ────────────────────────────
-    # Expansion 68 -> 128
-    x = Dense(128, activation='relu')(inputs)
-    x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
-    
-    # Compression 128 -> 64
-    x = Dense(64, activation='relu')(x)
-    x = BatchNormalization()(x)
-    x = Dropout(0.2)(x)
-    
-    # ─── BOTTLENECK ─────────────────────────
-    # Compression 64 -> 32
-    bottleneck = Dense(bottleneck_dim, activation='relu')(x)
-    bottleneck = BatchNormalization()(bottleneck)
-    
-    # ─── DECODER ────────────────────────────
-    # Expansion 32 -> 64
-    x = Dense(64, activation='relu')(bottleneck)
-    x = BatchNormalization()(x)
-    
-    # Expansion 64 -> 128
-    x = Dense(128, activation='relu')(x)
-    x = BatchNormalization()(x)
-    
-    # Output 128 -> 68 (Linear activation to match scaled input)
-    outputs = Dense(input_dim, activation='linear')(x)
-    
-    model = Model(inputs, outputs)
-    model.compile(optimizer='adam', loss='mse')
-    
-    return model
-```
+This guide explains EXACTLY what happened in your Phase 2 experiments. Use this to handle tricky questions from professors regarding "Why didn't the model catch more attacks?"
 
 ---
 
-## 2. Infrastructure & Caching (Slide 3)
-
-**What to say:**
-> "Processing 3.2 million rows of network traffic on a constrained AWS t3.large instance required engineering. We used chunked processing—reading 100,000 rows at a time and downcasting features to float32 to prevent Out-Of-Memory (OOM) crashes. More importantly, we built a 5-stage caching pipeline. Every major step (cleaning -> scaling -> training -> error computation) saves its output locally as Parquet or Numpy binaries. If a step crashes, we don't restart from zero; we load the binary cache in seconds instead of minutes."
+## 1. The "Big Picture" Results
+When asked about overall performance, use these three numbers. They prove the model *ranks* traffic correctly, even if the final detection count (Recall) looks low.
+- **ROC-AUC (0.8965):** This is the most important stat. It means if you pick one random benign flow and one random attack flow, the model will correctly give the attack a higher error score **89.6%** of the time.
+- **Average Precision (0.7578):** This shows the model is highly effective at keeping Benign traffic separate from Attack traffic.
+- **Separation Ratio (4.3x):** The average attack flow produces **4.3 times more error** than the average benign flow (0.347 vs 0.081).
 
 ---
 
-## 3. Investigating Failure Cases (False Positives & Negatives)
+## 2. The "Dial" Problem: P90 vs. P99 Thresholds
+If the professor asks: **"Why did you choose P99 if it misses so many attacks?"**, use this explanation. Think of the threshold like a **Volume Dial** on a radio.
 
-If the professor asks **"How do you investigate the traffic that the model gets wrong?"**, you can explain that because you saved the reconstruction errors and actual labels to binary `.npy` cache files, you can extract the exact failing network flows in seconds without needing to reload the raw CSV files or retrain the model.
+### What is P99? (The "Silent" Setting)
+- **Definition:** We set the threshold at the 99th percentile of benign traffic. 
+- **Meaning:** 99% of normal traffic is "under the line." Only **1%** of normal traffic will cause a False Alarm.
+- **Role:** This is for **High Precision**. It ensures that if the system sends an alert to a human analyst, there is a very high chance it is a real attack.
+- **The Cost (Failure Cases):** Because the line is so far to the right, any "stealthy" attacks that look even slightly normal are missed (False Negatives). This is why your recall is only 1.7%.
 
-### Extraction Code
-You can run the following Python code on your AWS instance (inside a new Jupyter notebook cell) to isolate and inspect the failure cases:
+### What is P90? (The "Aggressive" Setting)
+- **Definition:** We set the line at the 90th percentile.
+- **Meaning:** 10% of normal traffic will now cause False Alarms.
+- **Role:** This is for **High Recall**. You catch **70.5%** of all attacks (compared to only 1.7% at P99).
+- **The Cost:** A human analyst would be buried in "Alert Fatigue"—1 out of every 10 normal packets would trigger an alarm.
+
+### Why does this cause False Negatives?
+In a perfect world, Benign and Attack traffic would be two separate "islands" of data. In the real world, they overlap.
+- **The P99 Line** sits in the middle of the "Attack Island." It cuts off 98% of the attacks because they aren't "weird enough" to cross the 99% benign threshold.
+- **The Failure isn't the model's math; it's the operational trade-off.** We chose a "Quiet" system that only screams when it's absolutely sure (P99), rather than a "Noisy" system that catches everything but cries wolf constantly (P90).
+
+---
+
+## 3. The Failure Analysis (5 Root Causes)
+Your presentation has 1,144,086 False Negatives. This is **not a model failure**, it is a **threshold choice**. We chose the **P99 Threshold (0.970)** to keep False Positives under 1%. 
+
+If the professor asks for the "Root Causes of Failure," give them these 5 points:
+
+### 1. Stateless Analysis (The "Single Flow" Problem)
+The model analyzes one flow at a time. It has no memory of what happened 5 seconds ago.
+- **Example:** An **SSH Brute Force** attack is just many failed logins. A single failed login looks 100% normal to an Autoencoder. You need a "sliding window" to see the pattern of 1,000 attempts.
+
+### 2. Protocol Camouflage
+Attacks like **HOIC**, **LOIC-HTTP**, and **Botnets** use the standard HTTP protocol. 
+- **The Issue:** These flows look exactly like someone browsing Google or Chrome. Their statistics are nearly identical to legitimate traffic. Their error is slightly higher (~0.3), but still well below our P99 threshold of 0.97.
+
+### 3. Conservative Threshold Logic
+We prioritized "Analyst Alert Fatigue." 
+- **The Proof:** At the P99 threshold, we catch <2% of attacks but have <1% False Positives.
+- **The Trade-off:** If we lower the threshold to **P90**, we catch **70.5%** of all attacks. This proves the model is scoring them correctly, but our threshold is intentionally set to "Silent Mode."
+
+### 4. Adversarial/Stealth Design
+Some attacks are mathematically identical to benign traffic.
+- **Example:** The **Bot** class error (0.127) is almost the same as the **Benign** mean (0.081). Many bots are built specifically to stay "under the radar" by tricking traffic manifolds.
+
+### 5. Volume vs. Flow Granularity
+DDoS attacks are a threat because of **volume**, not content.
+- **The Issue:** The Autoencoder doesn't "know" it's seeing 10,000 identical flows per second. It just sees them as 10,000 individual normal-looking flows.
+
+---
+
+## 3. Investigating via Code (AWS Scripts)
+You can prove these points to your professor by loading the cached data. Use the `.npy` files to see exactly which attacks are "stealthy."
 
 ```python
 import numpy as np
 import os
 import pandas as pd
 
-# 1. Point to your AWS cache directory
 CACHE_DIR = os.path.expanduser("~/ids2018/cache")
 
-# 2. Load the cached numpy arrays directly (Loads in <2 seconds)
-print("Loading cached data...")
+# Load errors and labels
 recon_errors = np.load(os.path.join(CACHE_DIR, "recon_errors.npy"))
 y_all        = np.load(os.path.join(CACHE_DIR, "y_all.npy"))
 labels_all   = np.load(os.path.join(CACHE_DIR, "labels_all.npy"), allow_pickle=True)
-X_all        = np.load(os.path.join(CACHE_DIR, "X_all_scaled.npy")) # The actual flow features
 
-# 3. Set the operational threshold (Derived from the P99 of benign validation set)
-THRESHOLD = 0.970  
+# 1. Show the "Invisible" Attackers
+# Attacks that scored LOWER than the average benign flow
+invisible_mask = (y_all == 1) & (recon_errors < 0.081)
+print(f"Attacks scoring as 'Ultra-Normal': {invisible_mask.sum()}")
 
-# 4. Generate Predictions (1 = Attack, 0 = Benign)
-preds = (recon_errors > THRESHOLD).astype(int)
-
-# ────────────────────────────────────────────────────────────
-# FALSE POSITIVES (Model said Attack, but it was Benign)
-# ────────────────────────────────────────────────────────────
-# y_all == 0 (Actual Benign) AND preds == 1 (Predicted Attack)
-fp_mask = (y_all == 0) & (preds == 1)
-
-fp_indices = np.where(fp_mask)[0]
-fp_errors  = recon_errors[fp_mask]
-fp_features = X_all[fp_mask]
-
-print(f"\n--- FALSE POSITIVES ---")
-print(f"Total False Positives: {fp_mask.sum():,}")
-print(f"Average Recon Error of FPs: {fp_errors.mean():.4f}")
-
-# ────────────────────────────────────────────────────────────
-# FALSE NEGATIVES (Model said Benign, but it was an Attack)
-# ────────────────────────────────────────────────────────────
-# y_all == 1 (Actual Attack) AND preds == 0 (Predicted Benign)
-fn_mask = (y_all == 1) & (preds == 0)
-
-fn_indices = np.where(fn_mask)[0]
-fn_errors  = recon_errors[fn_mask]
-fn_labels  = labels_all[fn_mask]   # What type of attacks slipped through?
-fn_features = X_all[fn_mask]
-
-print(f"\n--- FALSE NEGATIVES ---")
-print(f"Total False Negatives: {fn_mask.sum():,}")
-print(f"Average Recon Error of FNs: {fn_errors.mean():.4f}")
-
-# View which specific attack families slipped through the most:
-fn_df = pd.DataFrame({'Attack_Type': fn_labels})
-print("\nTop 5 Attack Families that evaded detection (False Negatives):")
-print(fn_df['Attack_Type'].value_counts().head(5))
-
-# If you want to view the raw features of the worst False Negative:
-# (The attack with the lowest reconstruction error - completely stealthy)
-stealthiest_idx = np.argmin(fn_errors) # Index within the FN array
-print(f"\nStealthiest attack error score: {fn_errors[stealthiest_idx]:.5f}")
-print(f"Stealthiest attack features: {fn_features[stealthiest_idx][:5]}...") 
+# 2. Per-Class Analysis
+df = pd.DataFrame({'Label': labels_all, 'Error': recon_errors})
+print(df.groupby('Label')['Error'].mean().sort_values(ascending=False))
 ```
 
-### Explaining the Output
-If you run the code above, you can tell the professor:
-1. **False Positives (FPR = 0.98%):** These are normal benign flows that had high reconstruction errors because they represented rare but legal network behaviour (e.g., a massive sudden legal file transfer).
-2. **False Negatives:** By printing the `fn_labels`, you will see that the vast majority of False Negatives belong to the `Bot`, `SSH-Bruteforce`, and `Infiltration` classes. These attacks are "Stealth Attacks" that perfectly mimic normal timing and byte-size statistics, resulting in low reconstruction errors that fall below the threshold. 
+---
 
-This directly proves the need for your **Phase 3 Hybrid System**, where the OCSVM and Random Forest models will catch these stealth attacks that the Autoencoder misses.
+## 4. Key Talking Point for the Oral Exam
+"The Autoencoder is our **Anomaly Detector**. It excels at catching 'loud' volumetric attacks like **LOIC-UDP (100% detection)** and **Slowloris (73.6%)**. We don't expect it to catch stealthy bots—that is why we have the **Hybrid Tier (Random Forest + OCSVM)** in our final architecture to fill that specific gap."

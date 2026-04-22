@@ -195,7 +195,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     <span>15 Attack Classes</span>
   </div>
 </div>
-<div class="snum">01 / 10</div>
+<div class="snum">01 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 2 — PROBLEM ==================== -->
@@ -228,7 +228,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     </div>
   </div>
 </div>
-<div class="snum">02 / 10</div>
+<div class="snum">02 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 3 — INFRA ==================== -->
@@ -288,7 +288,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     </div>
   </div>
 </div>
-<div class="snum">03 / 10</div>
+<div class="snum">03 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 4 — ARCHITECTURE (VGG STYLE) ==================== -->
@@ -383,7 +383,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     </div>
   </div>
 </div>
-<div class="snum">04 / 10</div>
+<div class="snum">04 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 5 — DATASET ==================== -->
@@ -410,14 +410,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
         <ul>
           <li>Drop identifiers (IP, Port, Timestamp, Protocol)</li>
           <li>Remove constant + high-correlation (>0.98) features</li>
-          <li>Replace inf values, fill remaining NaN with 0</li>
+          <li>Replace inf values, fill remaining NaN with column median</li>
           <li>Downcast to float32 for memory efficiency</li>
         </ul>
       </div>
     </div>
   </div>
 </div>
-<div class="snum">05 / 10</div>
+<div class="snum">05 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 6 — TRAINING ==================== -->
@@ -455,7 +455,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     </div>
   </div>
 </div>
-<div class="snum">06 / 10</div>
+<div class="snum">06 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 7 — RESULTS ==================== -->
@@ -482,16 +482,16 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     <div class="card">
       <h3><span class="dot" style="background:var(--sun)"></span>Interpreting Low Recall</h3>
       <ul>
-        <li>P99 is a <b>conservative</b> threshold by design</li>
-        <li>ROC-AUC <b>0.896</b> = strong ranking separation</li>
-        <li>Many stealth attacks mimic normal flow statistics</li>
-        <li>Lowering threshold → more attacks caught, more noise</li>
-        <li>This trade-off is operational, not architectural</li>
+        <li>P99 is a <b>conservative</b> threshold by design — ~1% FPR</li>
+        <li>ROC-AUC <b>0.896</b> = strong ranking ability across all thresholds</li>
+        <li>At <b>P95</b>: recall = <b>37.8%</b> · FPR = 5% · F1 = 0.516</li>
+        <li>At <b>P90</b>: recall = <b>70.5%</b> · FPR = 10% · F1 = 0.749</li>
+        <li>This trade-off is <b>operational</b>, not architectural — no retraining needed</li>
       </ul>
     </div>
   </div>
 </div>
-<div class="snum">07 / 10</div>
+<div class="snum">07 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 8 — PER-ATTACK ==================== -->
@@ -502,30 +502,73 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
   <p class="sub" style="margin-bottom:16px">Detection depends on how much an attack deviates from normal flow statistics.</p>
   <div class="card" style="overflow-x:auto">
     <table class="tbl">
-      <thead><tr><th>Attack Family</th><th>Samples</th><th>Detected</th><th>Rate</th><th>Recon Error</th><th></th></tr></thead>
+      <thead><tr><th>Attack Type</th><th>Samples</th><th>Detected</th><th>Rate</th><th>Mean Error</th><th>Catchable @ P95?</th></tr></thead>
       <tbody>
-        <tr><td><b>DDOS LOIC-UDP</b></td><td>1,730</td><td>1,730</td><td style="color:var(--mint);font-weight:700">100%</td><td><code>8.94</code></td><td><span class="b b-g">EXCELLENT</span></td></tr>
-        <tr><td><b>DoS Slowloris</b></td><td>9,908</td><td>7,295</td><td style="color:var(--mint);font-weight:700">73.6%</td><td><code>2.71</code></td><td><span class="b b-g">GOOD</span></td></tr>
-        <tr><td>Brute Force XSS</td><td>228</td><td>109</td><td>47.8%</td><td><code>1.23</code></td><td><span class="b b-y">PARTIAL</span></td></tr>
-        <tr><td>DoS GoldenEye</td><td>41,406</td><td>8,413</td><td>20.3%</td><td><code>0.67</code></td><td><span class="b b-y">PARTIAL</span></td></tr>
-        <tr><td>Bot / SSH / HOIC / Infiltration</td><td>524K+</td><td>≤1,057</td><td>≤1.2%</td><td><code>≤0.43</code></td><td><span class="b b-r">STEALTH</span></td></tr>
+        <tr><td><b>DDOS LOIC-UDP</b></td><td>1,730</td><td>1,730</td><td style="color:var(--mint);font-weight:700">100%</td><td><code>8.94</code></td><td><span class="b b-g">YES</span></td></tr>
+        <tr><td><b>DoS Slowloris</b></td><td>9,908</td><td>7,295</td><td style="color:var(--mint);font-weight:700">73.6%</td><td><code>2.71</code></td><td><span class="b b-g">YES</span></td></tr>
+        <tr><td>Brute Force XSS</td><td>228</td><td>109</td><td>47.8%</td><td><code>1.23</code></td><td><span class="b b-y">NO</span></td></tr>
+        <tr><td>DoS GoldenEye</td><td>41,406</td><td>8,413</td><td>20.3%</td><td><code>0.67</code></td><td><span class="b b-g">YES</span></td></tr>
+        <tr><td>Brute Force Web</td><td>553</td><td>132</td><td>23.9%</td><td><code>0.40</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>SQL Injection</td><td>84</td><td>6</td><td>7.1%</td><td><code>0.28</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>FTP BruteForce</td><td>55</td><td>2</td><td>3.6%</td><td><code>0.30</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>DDOS HOIC</td><td>195,280</td><td>0</td><td style="color:var(--coral);font-weight:700">0%</td><td><code>0.42</code></td><td><span class="b b-g">YES</span></td></tr>
+        <tr><td>SSH Bruteforce</td><td>94,048</td><td>0</td><td style="color:var(--coral);font-weight:700">0%</td><td><code>0.43</code></td><td><span class="b b-g">YES</span></td></tr>
+        <tr><td>DoS Hulk</td><td>87,747</td><td>93</td><td style="color:var(--coral);font-weight:700">0.1%</td><td><code>0.23</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>DDoS LOIC-HTTP</td><td>498,301</td><td>751</td><td style="color:var(--coral);font-weight:700">0.15%</td><td><code>0.33</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>Bot</td><td>144,535</td><td>653</td><td style="color:var(--coral);font-weight:700">0.45%</td><td><code>0.13</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
+        <tr><td>Infiltration</td><td>90,390</td><td>1,057</td><td>1.1%</td><td><code>0.09</code></td><td><span class="b b-r">NO (stealth)</span></td></tr>
       </tbody>
     </table>
   </div>
   <div class="two" style="margin-top:14px">
     <div class="cta" style="margin:0;border-color:var(--mint);background:linear-gradient(135deg,#e6f7f0,#f7f8fc)">
-      <p><b>High-signal attacks</b> (LOIC-UDP, Slowloris) produce vastly different flow patterns → high reconstruction error → easy to detect</p>
+      <p><b>Catchable attacks:</b> LOIC-UDP (100%), Slowloris (73.6%), GoldenEye (20.3%) — high reconstruction error, clearly deviate from normal flow patterns. HOIC &amp; SSH also catchable if threshold is lowered to P95.</p>
     </div>
     <div class="cta" style="margin:0;border-color:var(--coral);background:linear-gradient(135deg,#fce8e8,#f7f8fc)">
-      <p><b>Stealth attacks</b> (Bot, SSH) mimic benign traffic closely → low error → need complementary models (RF, OCSVM) to catch</p>
+      <p><b>True stealth attacks:</b> Bot (error=0.13 ≈ benign 0.08), Infiltration (error=0.09), LOIC-HTTP, Hulk — statistically indistinguishable from normal at any reasonable threshold. Need temporal aggregation or complementary models.</p>
     </div>
   </div>
 </div>
-<div class="snum">08 / 10</div>
+<div class="snum">08 / 11</div>
 </section>
 
-<!-- ==================== SLIDE 9 — MULTI-TIER (no hybrid) ==================== -->
+<!-- ==================== SLIDE 9 — FAILURE ANALYSIS ==================== -->
 <section class="slide" id="s9">
+<div class="inner">
+  <div class="tag">Failure Analysis</div>
+  <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Why <span class="grad">98.3% of Attacks</span> Were Missed</h2>
+  <p class="sub" style="margin-bottom:16px">At P99 threshold: 1,144,086 attacks missed. Five distinct root causes — each requiring a different architectural fix.</p>
+  <div class="three">
+    <div class="card" style="border-top:3px solid var(--coral)">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--coral)"></span>1. Stateless Analysis</h3>
+      <p style="font-size:.78rem">Each flow scored <b>independently</b>. SSH brute force only reveals itself across thousands of attempts—invisible flow-by-flow. Fix: sliding window aggregation.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sun)">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--sun)"></span>2. Protocol Camouflage</h3>
+      <p style="font-size:.78rem">HTTP-based attacks (HOIC, LOIC-HTTP, Bot) use <b>normal HTTP protocol</b>. Flow stats look like browser traffic. Error 0.13–0.43 vs benign 0.08.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sky)">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--sky)"></span>3. Conservative Threshold</h3>
+      <p style="font-size:.78rem">P99 keeps FPR ≤ 1% (Anti-Alert Fatigue). At <b>P90: recall = 70.5%</b> · F1 = 0.749. The model ranks attacks correctly—threshold is the gating factor.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pop)">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--pop)"></span>4. Adversarial Design</h3>
+      <p style="font-size:.78rem">Bot malware error = <b>0.127 ≈ benign 0.081</b>. Built specifically to mimic normal traffic. 7.5% of attacks score below the benign mean entirely.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--mint)">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--mint)"></span>5. Volume vs. Flow</h3>
+      <p style="font-size:.78rem">DDoS is dangerous due to <b>aggregate volume</b>. Our model sees one packet at a time, not the massive wave. Fix: Network-level flow frequency sensors.</p>
+    </div>
+  </div>
+  <div class="cta" style="margin-top:14px">
+    <p><b>Key insight:</b> The model <em>does</em> score most attacks higher than benign (4.3× separation) — but 98.3% still fall below the P99 line. Choosing P90 would catch 70.5% of attacks. The right threshold depends on the SOC's analyst capacity.</p>
+  </div>
+</div>
+<div class="snum">09 / 11</div>
+</section>
+
+<!-- ==================== SLIDE 10 — MULTI-TIER ==================== -->
+<section class="slide" id="s10">
 <div class="inner">
   <div class="two">
     <div>
@@ -554,11 +597,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     <p><b>Defense-in-Depth:</b> RF catches known patterns, OCSVM provides kernel-based novelty detection, and the Autoencoder supplies continuous anomaly scoring. A future hybrid layer will fuse all three signals for maximum coverage.</p>
   </div>
 </div>
-<div class="snum">09 / 10</div>
+<div class="snum">10 / 11</div>
 </section>
 
 <!-- ==================== SLIDE 10 — CONCLUSION ==================== -->
-<section class="slide" id="s10">
+<section class="slide" id="s11">
 <div class="inner">
   <div class="two">
     <div>
@@ -597,11 +640,11 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:h
     </p>
   </div>
 </div>
-<div class="snum">10 / 10</div>
+<div class="snum">11 / 11</div>
 </section>
 
 <script>
-const N=10;
+const N=11;
 const nav=document.getElementById('nav');
 for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='nd'+(i===1?' on':'');d.onclick=()=>document.getElementById('s'+i).scrollIntoView({behavior:'smooth'});nav.appendChild(d)}
 const dots=[...nav.children],slides=[...document.querySelectorAll('.slide')];

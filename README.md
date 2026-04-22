@@ -44,7 +44,7 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 | One-Class SVM | 2 | 0.660 | 0.040 | 0.070 | 0.040 |
 | **Autoencoder** | **2** | 0.501 | 0.017 | 0.034 | **0.017** |
 
-> **Key Takeaway:** The Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.9168 and Avg Precision of 0.7578, effectively addressing the zero-day detection gap left by supervised models.
+> **Key Takeaway:** The Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.8965 and Avg Precision of 0.7578, effectively addressing the zero-day detection gap left by supervised models.
 
 ---
 
