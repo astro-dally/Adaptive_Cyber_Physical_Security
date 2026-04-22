@@ -42,10 +42,9 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 | One-Class SVM | 1 | 0.907 | 0.145 | 0.249 | 0.145 |
 | Random Forest | 2 | 1.000 | 0.130 | 0.240 | **~0.000** ❌ |
 | One-Class SVM | 2 | 0.660 | 0.040 | 0.070 | 0.040 |
-| **Hybrid (RF + OCSVM)** | **2** | **TBD** | **TBD** | **TBD** | **≥ 0.040** ✅ |
-| **Autoencoder** | **2** | — | — | — | **High** ✅ |
+| **Autoencoder** | **2** | 0.501 | 0.017 | 0.034 | **0.017** |
 
-> **Key Takeaway:** The Hybrid OR-fusion model guarantees a baseline zero-day recall, while the Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.9168 and Avg Precision of 0.7578.
+> **Key Takeaway:** The Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.9168 and Avg Precision of 0.7578, effectively addressing the zero-day detection gap left by supervised models.
 
 ---
 
@@ -153,7 +152,6 @@ jupyter notebook experiments/feature_engineering/fe_cic18.ipynb
 # Train & Evaluate Models (Jupyter Notebooks & Scripts)
 jupyter notebook experiments/models/rf_model.ipynb           # Random Forest
 jupyter notebook experiments/models/ocsvm_model.ipynb        # One-Class SVM
-python experiments/models/hybrid_model.py                    # Hybrid (RF + OCSVM)
 jupyter notebook experiments/models/autoencoder_model.ipynb  # Autoencoder
 ```
 
@@ -199,16 +197,6 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | **Strength** | Continuous anomaly score, threshold-tunable, per-attack profiling |
 | **Diagnostics** | ROC, PR-curve, error histograms, per-attack detection rates |
 
-### Tier 4 — Hybrid Model (OR-Fusion) — *Phase 2 New*
-
-| Property | Value |
-|:---------|:------|
-| **Type** | Decision-level ensemble combiner |
-| **Logic** | `attack = RF_attack OR OCSVM_attack` |
-| **Guarantee** | `Recall_Hybrid ≥ max(Recall_RF, Recall_OCSVM)` |
-| **Strength** | Combines Random Forest precision on seen threats with OCSVM anomaly detection |
-| **Trade-off** | Precision drops compared to Random Forest baseline (acceptable for security) |
-
 ---
 
 ## 📈 Generated Visualizations
@@ -234,7 +222,6 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | OCSVM curves | `outputs/plots/models/ocsvm_output/ocsvm_curves.png` |
 | OCSVM score distribution | `outputs/plots/models/ocsvm_output/ocsvm_score_dist.png` |
 | OCSVM confusion matrix | `outputs/plots/models/ocsvm_output/ocsvm_confusion_matrix.png` |
-| Hybrid confusion matrix | `outputs/plots/models/hybrid_confusion_matrix.png` |
 
 ### Autoencoder Diagnostics
 | Plot | File |
@@ -250,12 +237,12 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 ### 🖼️ Key Evidence Visualized
 
 <p align="center">
-  <img src="outputs/plots/models/hybrid_confusion_matrix.png" width="48%" alt="Hybrid Model Confusion Matrix" />
   <img src="outputs/plots/models/autoencoder_output/plot_roc_curve.png" width="48%" alt="Autoencoder ROC Curve" />
+  <img src="outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png" width="48%" alt="Threshold Sensitivity" />
 </p>
 <p align="center">
-  <img src="outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png" width="48%" alt="Threshold Sensitivity" />
   <img src="outputs/plots/models/autoencoder_output/plot_per_attack_detection.png" width="48%" alt="Per-Attack Detection Rate" />
+  <img src="outputs/plots/models/autoencoder_output/plot_pr_curve.png" width="48%" alt="Autoencoder PR Curve" />
 </p>
 
 ---
