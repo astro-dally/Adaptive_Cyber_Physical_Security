@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase 2 — Adaptive Cyber-Physical Security</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f8fc;
+  --surface:#ffffff;
+  --card:#ffffff;
+  --border:#e2e6f0;
+  --pop:#5b4cdb;
+  --pop2:#7c6ff7;
+  --mint:#0da678;
+  --coral:#e05252;
+  --sun:#d4930a;
+  --sky:#2b7de9;
+  --dark:#1a1d2e;
+  --text:#2a2d3e;
+  --gray:#6b7190;
+  --dim:#9ca3bf;
+  --sans:'Outfit',sans-serif;
+  --mono:'Space Mono',monospace;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.08);
+}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden}
+
+/* ===== SLIDE ===== */
+.slide{
+  width:100vw;height:100vh;
+  scroll-snap-align:start;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:44px 60px;
+}
+.inner{max-width:1100px;width:100%;position:relative;z-index:1}
+.snum{
+  position:absolute;top:24px;right:36px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:2px;
+}
+
+/* ===== TYPOGRAPHY ===== */
+.tag{
+  font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:4px;color:var(--pop);margin-bottom:8px;font-weight:700;
+}
+.big{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:10px;color:var(--dark)}
+.big .grad{
+  background:linear-gradient(135deg,var(--pop),var(--sky));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sub{font-size:clamp(.88rem,1.4vw,1.02rem);color:var(--gray);line-height:1.65;max-width:640px}
+.sub b{color:var(--dark);font-weight:600}
+
+/* ===== LAYOUTS ===== */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/* ===== PILL ===== */
+.pill{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:22px 18px;text-align:center;
+  box-shadow:var(--shadow);transition:.3s ease;
+}
+.pill:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.pill .val{font-family:var(--mono);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;margin-bottom:4px}
+.pill .lbl{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:2px}
+
+/* ===== CARD ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:22px 24px;box-shadow:var(--shadow);
+}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:8px;color:var(--dark);display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.card ul{list-style:none;padding:0}
+.card li{font-size:.84rem;color:var(--gray);line-height:1.65;padding-left:18px;position:relative;margin-bottom:3px}
+.card li::before{content:'→';position:absolute;left:0;color:var(--pop2);font-weight:700;font-size:.75rem}
+.card p{font-size:.84rem;color:var(--gray);line-height:1.65}
+
+/* ===== VGG-STYLE ARCHITECTURE ===== */
+.vgg{display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:4px 0}
+.vgg-col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.vgg-block{
+  width:64px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.7rem;font-weight:700;color:#fff;
+  transition:.3s ease;letter-spacing:.5px;
+}
+.vgg-block:hover{transform:scaleY(1.05);filter:brightness(1.1)}
+.vgg-lbl{font-size:.55rem;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px;text-align:center;font-weight:500}
+/* Height = proportional to neuron count. BN/DO are thin accent bars */
+.vgg-dense{background:var(--pop)}
+.vgg-bn{background:#e8e5ff;height:8px !important;border-radius:3px;font-size:0 !important}
+.vgg-do{background:#ffe5e5;height:8px !important;border-radius:3px;font-size:0 !important}
+.vgg-neck{background:var(--sun)}
+.vgg-arrow{
+  display:flex;align-items:center;justify-content:center;color:var(--dim);
+  font-size:1.2rem;padding:0 2px;align-self:center;
+}
+/* Legend row */
+.vgg-legend{display:flex;gap:16px;justify-content:center;margin-top:12px}
+.vgg-legend span{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--gray)}
+.vgg-legend i{width:20px;height:8px;border-radius:3px;display:inline-block}
+
+/* ===== TABLE ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.tbl th{
+  text-align:left;padding:8px 12px;font-family:var(--mono);font-size:.62rem;
+  text-transform:uppercase;letter-spacing:2px;color:var(--pop);
+  border-bottom:2px solid var(--border);background:var(--bg);
+}
+.tbl td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--gray)}
+.tbl tr:hover td{background:rgba(91,76,219,.03)}
+.tbl code{font-family:var(--mono);font-size:.78em;color:var(--pop2)}
+
+/* ===== BADGES ===== */
+.b{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.62rem;font-weight:700;letter-spacing:.5px}
+.b-g{background:#e6f7f0;color:var(--mint)}
+.b-r{background:#fce8e8;color:var(--coral)}
+.b-y{background:#fef6e0;color:var(--sun)}
+
+/* ===== CALLOUT ===== */
+.cta{
+  background:linear-gradient(135deg,#f0eeff,#e8f4ff);
+  border-left:3px solid var(--pop);border-radius:0 10px 10px 0;
+  padding:14px 20px;margin-top:14px;
+}
+.cta p{font-size:.85rem;color:var(--gray);line-height:1.6}
+.cta b{color:var(--dark)}
+
+/* ===== TITLE ===== */
+.title-center{text-align:center}
+.title-center .big{font-size:clamp(2.4rem,5vw,3.6rem);margin-bottom:14px}
+.title-center .sub{margin:0 auto 32px}
+.meta{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.meta span{
+  font-family:var(--mono);font-size:.72rem;color:var(--gray);font-weight:500;
+  background:var(--card);padding:6px 16px;border-radius:99px;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+
+/* ===== INFRA BLOCKS ===== */
+.infra-stack{display:flex;flex-direction:column;gap:8px}
+.infra-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:12px 18px;box-shadow:var(--shadow);
+  transition:.3s ease;
+}
+.infra-row:hover{box-shadow:var(--shadow-lg);transform:translateX(4px)}
+.infra-icon{font-size:1.3rem;width:36px;text-align:center;flex-shrink:0}
+.infra-text h4{font-size:.85rem;font-weight:700;color:var(--dark);margin-bottom:1px}
+.infra-text p{font-size:.76rem;color:var(--gray);line-height:1.4}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:7px;z-index:99;
+}
+.nd{
+  width:9px;height:9px;border-radius:50%;border:1.5px solid var(--dim);
+  background:transparent;cursor:pointer;transition:.3s ease;
+}
+.nd:hover,.nd.on{background:var(--pop);border-color:var(--pop);box-shadow:0 0 8px rgba(91,76,219,.25)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .slide{padding:20px}
+  .two,.three,.four{grid-template-columns:1fr}
+  .vgg{flex-wrap:wrap;gap:10px}
+  .nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav"></nav>
+
+<!-- ==================== SLIDE 1 — TITLE ==================== -->
+<section class="slide" id="s1">
+<div class="inner title-center">
+  <div class="tag">Phase 2 · Deep Learning</div>
+  <h1 class="big"><span class="grad">Adaptive Cyber-Physical Security</span></h1>
+  <p class="sub">A Deep Autoencoder for Zero-Day Intrusion Detection<br>trained exclusively on benign network traffic</p>
+  <div class="meta">
+    <span>CIC-IDS-2018</span>
+    <span>3.2M Flows</span>
+    <span>68 Features</span>
+    <span>15 Attack Classes</span>
+  </div>
+</div>
+<div class="snum">01 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 2 — PROBLEM ==================== -->
+<section class="slide" id="s2">
+<div class="inner">
+  <div class="two">
+    <div>
+      <div class="tag">The Problem</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Why Existing<br><span class="grad">IDS Fail</span></h2>
+      <p class="sub">Most ML-based intrusion detection systems achieve high benchmark accuracy — but collapse in production against novel, unseen attacks.</p>
+      <div class="cta" style="margin-top:16px">
+        <p><b>Core issue:</b> Random train/test splits leak future attack knowledge into training. When these models face true zero-day threats, recall drops to near zero.</p>
+      </div>
+    </div>
+    <div>
+      <div class="three" style="grid-template-columns:1fr">
+        <div class="card">
+          <h3><span class="dot" style="background:var(--coral)"></span>Legacy Datasets</h3>
+          <p>KDDCup99 and NSL-KDD lack modern attack vectors and don't represent real-world network topologies</p>
+        </div>
+        <div class="card">
+          <h3><span class="dot" style="background:var(--sun)"></span>Closed-World Evaluation</h3>
+          <p>Models trained on all attack types score well on benchmarks but can't generalize to novel threats</p>
+        </div>
+        <div class="card">
+          <h3><span class="dot" style="background:var(--mint)"></span>Our Solution</h3>
+          <p>Train only on benign data → any deviation signals an intrusion, including attacks never seen before</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="snum">02 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 3 — INFRA ==================== -->
+<section class="slide" id="s3">
+<div class="inner">
+  <div class="two">
+    <div>
+      <div class="tag">Infrastructure</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Cloud Training<br><span class="grad">Setup</span></h2>
+      <p class="sub">Built a production-grade pipeline on constrained cloud hardware — processing 3.2M network flows with intelligent caching to avoid redundant computation.</p>
+    </div>
+    <div>
+      <div class="infra-stack">
+        <div class="infra-row">
+          <div class="infra-icon">☁️</div>
+          <div class="infra-text">
+            <h4>AWS EC2 t3.large</h4>
+            <p>Ubuntu 24.04 · 2 vCPU · 8 GB RAM + 16 GB swap</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-icon">📦</div>
+          <div class="infra-text">
+            <h4>CIC-IDS-2018 Dataset</h4>
+            <p>10 raw CSV files · 8.2M total rows · 68 features extracted</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-icon">🧩</div>
+          <div class="infra-text">
+            <h4>Chunked Processing</h4>
+            <p>100K rows/chunk · 500K cap/file · float32 downcast for memory</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-icon">⚡</div>
+          <div class="infra-text">
+            <h4>5-Stage Caching Pipeline</h4>
+            <p>Parquet → .npy arrays → joblib scaler → .keras model → errors</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-icon">🔄</div>
+          <div class="infra-text">
+            <h4>Fast Iteration</h4>
+            <p>Full pipeline: ~40 min · Cached re-run: ~2 min</p>
+          </div>
+        </div>
+        <div class="infra-row">
+          <div class="infra-icon">🐍</div>
+          <div class="infra-text">
+            <h4>Stack</h4>
+            <p>Python 3.10 · TensorFlow/Keras · scikit-learn · pandas · matplotlib</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="snum">03 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 4 — ARCHITECTURE (VGG STYLE) ==================== -->
+<section class="slide" id="s4">
+<div class="inner">
+  <div class="tag">Architecture</div>
+  <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Symmetric Deep <span class="grad">Autoencoder</span></h2>
+  <p class="sub" style="margin-bottom:20px">Deep symmetric architecture that compresses the feature space by 53% at the bottleneck. Each layer includes BatchNorm for stability and Dropout for regularization.</p>
+
+  <!-- VGG-STYLE BLOCK DIAGRAM -->
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 24px;box-shadow:var(--shadow)">
+    <div class="vgg">
+      <!-- Input -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-dense" style="height:102px;width:58px">68</div>
+        <div class="vgg-lbl">Input<br>68 feats</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Encoder 1: Dense 128 + BN + Dropout -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-do" style="width:76px" title="Dropout 0.2"></div>
+        <div class="vgg-block vgg-bn" style="width:76px" title="BatchNorm"></div>
+        <div class="vgg-block vgg-dense" style="height:136px;width:76px">128</div>
+        <div class="vgg-lbl">Dense 128<br>+ BN + DO</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Encoder 2: Dense 64 + BN + Dropout -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-do" style="width:62px" title="Dropout 0.2"></div>
+        <div class="vgg-block vgg-bn" style="width:62px" title="BatchNorm"></div>
+        <div class="vgg-block vgg-dense" style="height:88px;width:62px">64</div>
+        <div class="vgg-lbl">Dense 64<br>+ BN + DO</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Bottleneck: Dense 32 + BN -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-bn" style="width:52px" title="BatchNorm"></div>
+        <div class="vgg-block vgg-neck" style="height:60px;width:52px;font-weight:800">32</div>
+        <div class="vgg-lbl" style="color:var(--sun);font-weight:700">Bottleneck<br>32 dims</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Decoder 1: Dense 64 + BN -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-bn" style="width:62px" title="BatchNorm"></div>
+        <div class="vgg-block vgg-dense" style="height:88px;width:62px;background:var(--sky)">64</div>
+        <div class="vgg-lbl">Dense 64<br>+ BN</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Decoder 2: Dense 128 + BN -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-bn" style="width:76px" title="BatchNorm"></div>
+        <div class="vgg-block vgg-dense" style="height:136px;width:76px;background:var(--sky)">128</div>
+        <div class="vgg-lbl">Dense 128<br>+ BN</div>
+      </div>
+      <div class="vgg-arrow">→</div>
+
+      <!-- Output -->
+      <div class="vgg-col">
+        <div class="vgg-block vgg-dense" style="height:102px;width:58px;background:#7c6ff7">68</div>
+        <div class="vgg-lbl">Output<br>68 feats</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="vgg-legend">
+      <span><i style="background:var(--pop)"></i> Encoder Dense (ReLU)</span>
+      <span><i style="background:var(--sky)"></i> Decoder Dense (ReLU)</span>
+      <span><i style="background:var(--sun)"></i> Bottleneck</span>
+      <span><i style="background:#e8e5ff"></i> BatchNorm</span>
+      <span><i style="background:#ffe5e5"></i> Dropout 0.2</span>
+    </div>
+  </div>
+
+  <!-- Bottom Info Cards -->
+  <div class="three" style="margin-top:16px">
+    <div class="card" style="padding:16px 18px">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--pop)"></span>Self-Supervised</h3>
+      <p style="font-size:.8rem"><b>Loss:</b> MSE(input, output) · Model learns to reconstruct normal traffic only</p>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--sun)"></span>39,908 Parameters</h3>
+      <p style="font-size:.8rem">Lightweight model. Bottleneck forces 53% compression of the feature space</p>
+    </div>
+    <div class="card" style="padding:16px 18px">
+      <h3 style="font-size:.85rem"><span class="dot" style="background:var(--mint)"></span>Anomaly Signal</h3>
+      <p style="font-size:.8rem">Attack traffic → high reconstruction error → flagged as anomaly at P99 threshold</p>
+    </div>
+  </div>
+</div>
+<div class="snum">04 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 5 — DATASET ==================== -->
+<section class="slide" id="s5">
+<div class="inner">
+  <div class="two">
+    <div>
+      <div class="tag">Data Strategy</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Benign-Only<br><span class="grad">Curriculum</span></h2>
+      <p class="sub">The model <b>never sees attack traffic</b> during training. It masters the normal distribution first — then any deviation signals an intrusion.</p>
+      <div class="cta" style="margin-top:14px">
+        <p><b>RobustScaler</b> fitted exclusively on benign data. Values clipped to [-10, 10] for gradient stability. This ensures the scaling parameters reflect the true normal distribution.</p>
+      </div>
+    </div>
+    <div>
+      <div class="four" style="grid-template-columns:1fr 1fr">
+        <div class="pill"><div class="val" style="color:var(--pop)">3.2M</div><div class="lbl">Total Flows</div></div>
+        <div class="pill"><div class="val" style="color:var(--sky)">68</div><div class="lbl">Features</div></div>
+        <div class="pill"><div class="val" style="color:var(--mint)">63.8%</div><div class="lbl">Benign</div></div>
+        <div class="pill"><div class="val" style="color:var(--coral)">15</div><div class="lbl">Attack Types</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <h3><span class="dot" style="background:var(--pop)"></span>Preprocessing</h3>
+        <ul>
+          <li>Drop identifiers (IP, Port, Timestamp, Protocol)</li>
+          <li>Remove constant + high-correlation (>0.98) features</li>
+          <li>Replace inf values, fill remaining NaN with 0</li>
+          <li>Downcast to float32 for memory efficiency</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="snum">05 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 6 — TRAINING ==================== -->
+<section class="slide" id="s6">
+<div class="inner">
+  <div class="tag">Training</div>
+  <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)"><span class="grad">Training</span> Configuration</h2>
+  <p class="sub" style="margin-bottom:20px">Optimized with early stopping and adaptive learning rate. Best model saved automatically.</p>
+  <div class="four">
+    <div class="pill"><div class="val" style="color:var(--sky)">48</div><div class="lbl">Best Epoch</div></div>
+    <div class="pill"><div class="val" style="color:var(--mint)">0.081</div><div class="lbl">Best Val MSE</div></div>
+    <div class="pill"><div class="val" style="color:var(--sun)">39.9K</div><div class="lbl">Parameters</div></div>
+    <div class="pill"><div class="val" style="color:var(--pop)">0.970</div><div class="lbl">P99 Threshold</div></div>
+  </div>
+  <div class="two" style="margin-top:20px">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--pop)"></span>Callbacks & Optimizer</h3>
+      <table class="tbl">
+        <tr><td><b>EarlyStopping</b></td><td>patience=7, restores best weights</td></tr>
+        <tr><td><b>ReduceLROnPlateau</b></td><td>halves LR after 4 stale epochs</td></tr>
+        <tr><td><b>ModelCheckpoint</b></td><td>saves best epoch automatically</td></tr>
+        <tr><td><b>Optimizer</b></td><td>Adam (lr = 10⁻³)</td></tr>
+        <tr><td><b>Batch Size</b></td><td>512</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--mint)"></span>Why Self-Supervised?</h3>
+      <ul>
+        <li>Input == Target → learns to reconstruct normal traffic</li>
+        <li>No attack labels needed during training</li>
+        <li>Any new/unseen attack naturally produces high error</li>
+        <li>Threshold set at <b>P99</b> of benign reconstruction error</li>
+        <li>Adjustable at deploy time without retraining</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="snum">06 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 7 — RESULTS ==================== -->
+<section class="slide" id="s7">
+<div class="inner">
+  <div class="tag">Results</div>
+  <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Detection <span class="grad">Performance</span></h2>
+  <div class="four" style="margin:20px 0">
+    <div class="pill"><div class="val" style="color:var(--mint)">0.896</div><div class="lbl">ROC-AUC</div></div>
+    <div class="pill"><div class="val" style="color:var(--pop)">0.758</div><div class="lbl">Avg Precision</div></div>
+    <div class="pill"><div class="val" style="color:var(--sun)">0.98%</div><div class="lbl">False Pos Rate</div></div>
+    <div class="pill"><div class="val" style="color:var(--coral)">1.7%</div><div class="lbl">Recall @ P99</div></div>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h3><span class="dot" style="background:var(--sky)"></span>Confusion Matrix</h3>
+      <table class="tbl">
+        <tr><th></th><th>Pred. Benign</th><th>Pred. Attack</th></tr>
+        <tr><td><b>Actual Benign</b></td><td style="color:var(--mint);font-weight:600">2,030,639</td><td>20,144</td></tr>
+        <tr><td><b>Actual Attack</b></td><td>1,144,086</td><td style="color:var(--mint);font-weight:600">20,241</td></tr>
+      </table>
+      <p style="margin-top:8px;font-size:.78rem"><b>FPR = 0.98%</b> — only 1 in 100 benign flows wrongly flagged</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot" style="background:var(--sun)"></span>Interpreting Low Recall</h3>
+      <ul>
+        <li>P99 is a <b>conservative</b> threshold by design</li>
+        <li>ROC-AUC <b>0.896</b> = strong ranking separation</li>
+        <li>Many stealth attacks mimic normal flow statistics</li>
+        <li>Lowering threshold → more attacks caught, more noise</li>
+        <li>This trade-off is operational, not architectural</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="snum">07 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 8 — PER-ATTACK ==================== -->
+<section class="slide" id="s8">
+<div class="inner">
+  <div class="tag">Per-Attack Analysis</div>
+  <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">What Gets <span class="grad">Detected?</span></h2>
+  <p class="sub" style="margin-bottom:16px">Detection depends on how much an attack deviates from normal flow statistics.</p>
+  <div class="card" style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>Attack Family</th><th>Samples</th><th>Detected</th><th>Rate</th><th>Recon Error</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><b>DDOS LOIC-UDP</b></td><td>1,730</td><td>1,730</td><td style="color:var(--mint);font-weight:700">100%</td><td><code>8.94</code></td><td><span class="b b-g">EXCELLENT</span></td></tr>
+        <tr><td><b>DoS Slowloris</b></td><td>9,908</td><td>7,295</td><td style="color:var(--mint);font-weight:700">73.6%</td><td><code>2.71</code></td><td><span class="b b-g">GOOD</span></td></tr>
+        <tr><td>Brute Force XSS</td><td>228</td><td>109</td><td>47.8%</td><td><code>1.23</code></td><td><span class="b b-y">PARTIAL</span></td></tr>
+        <tr><td>DoS GoldenEye</td><td>41,406</td><td>8,413</td><td>20.3%</td><td><code>0.67</code></td><td><span class="b b-y">PARTIAL</span></td></tr>
+        <tr><td>Bot / SSH / HOIC / Infiltration</td><td>524K+</td><td>≤1,057</td><td>≤1.2%</td><td><code>≤0.43</code></td><td><span class="b b-r">STEALTH</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="two" style="margin-top:14px">
+    <div class="cta" style="margin:0;border-color:var(--mint);background:linear-gradient(135deg,#e6f7f0,#f7f8fc)">
+      <p><b>High-signal attacks</b> (LOIC-UDP, Slowloris) produce vastly different flow patterns → high reconstruction error → easy to detect</p>
+    </div>
+    <div class="cta" style="margin:0;border-color:var(--coral);background:linear-gradient(135deg,#fce8e8,#f7f8fc)">
+      <p><b>Stealth attacks</b> (Bot, SSH) mimic benign traffic closely → low error → need complementary models (RF, OCSVM) to catch</p>
+    </div>
+  </div>
+</div>
+<div class="snum">08 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 9 — MULTI-TIER (no hybrid) ==================== -->
+<section class="slide" id="s9">
+<div class="inner">
+  <div class="two">
+    <div>
+      <div class="tag">System Design</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Multi-Tier<br><span class="grad">Defense Stack</span></h2>
+      <p class="sub">No single model handles all threat types. Each tier targets a different weakness in the detection pipeline.</p>
+    </div>
+    <div>
+      <div class="three" style="grid-template-columns:1fr">
+        <div class="card" style="border-left:3px solid var(--pop)">
+          <h3><span class="dot" style="background:var(--pop)"></span>Tier 1 — Random Forest</h3>
+          <p><b>Supervised classifier</b> trained on known attack labels. Perfect precision on seen attacks but zero recall on novel threats.</p>
+        </div>
+        <div class="card" style="border-left:3px solid var(--sky)">
+          <h3><span class="dot" style="background:var(--sky)"></span>Tier 2 — One-Class SVM</h3>
+          <p><b>Kernel boundary detector</b> trained on benign-only data. Catches some zero-day threats via anomaly boundary estimation.</p>
+        </div>
+        <div class="card" style="border-left:3px solid var(--mint)">
+          <h3><span class="dot" style="background:var(--mint)"></span>Tier 3 — Autoencoder (This Work)</h3>
+          <p><b>Deep anomaly scorer</b> that learns the normal manifold. Excels at detecting volumetric and timing-based attacks. Threshold tunable without retraining.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cta" style="margin-top:16px">
+    <p><b>Defense-in-Depth:</b> RF catches known patterns, OCSVM provides kernel-based novelty detection, and the Autoencoder supplies continuous anomaly scoring. A future hybrid layer will fuse all three signals for maximum coverage.</p>
+  </div>
+</div>
+<div class="snum">09 / 10</div>
+</section>
+
+<!-- ==================== SLIDE 10 — CONCLUSION ==================== -->
+<section class="slide" id="s10">
+<div class="inner">
+  <div class="two">
+    <div>
+      <div class="tag">What We Delivered</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Phase 2<br><span class="grad">Contributions</span></h2>
+      <div class="card" style="margin-top:12px">
+        <ul>
+          <li>68→128→64→32 expansion-compression autoencoder</li>
+          <li>ROC-AUC <b>0.896</b> · Avg Precision <b>0.758</b></li>
+          <li>100% detection on LOIC-UDP, 73.6% Slowloris</li>
+          <li>Benign-only training = true zero-day readiness</li>
+          <li>Production-grade caching on AWS t3.large</li>
+          <li>Full diagnostic suite (6 plot types)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="tag" style="color:var(--sky)">What's Next</div>
+      <h2 class="big" style="font-size:clamp(1.6rem,3vw,2.2rem)">Phase 3<br><span class="grad">Roadmap</span></h2>
+      <div class="card" style="margin-top:12px">
+        <ul>
+          <li>Hybrid OR-fusion with all three model tiers</li>
+          <li>SHAP-based feature interpretability</li>
+          <li>Automated F1-maximizing threshold selection</li>
+          <li>K-fold temporal cross-validation</li>
+          <li>Online concept drift adaptation</li>
+          <li>Grad-CAM attention visualization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:28px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)">
+    <p style="font-size:1rem;color:var(--gray);max-width:680px;margin:0 auto;line-height:1.7">
+      <i>"Known-attack recognition and zero-day detection are different tasks —<br>
+      <b style="color:var(--dark)">adaptive cyber-physical defense needs both."</b></i>
+    </p>
+  </div>
+</div>
+<div class="snum">10 / 10</div>
+</section>
+
+<script>
+const N=10;
+const nav=document.getElementById('nav');
+for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='nd'+(i===1?' on':'');d.onclick=()=>document.getElementById('s'+i).scrollIntoView({behavior:'smooth'});nav.appendChild(d)}
+const dots=[...nav.children],slides=[...document.querySelectorAll('.slide')];
+new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const i=slides.indexOf(e.target);dots.forEach(d=>d.classList.remove('on'));if(dots[i])dots[i].classList.add('on')}})},{threshold:.5}).observe&&slides.forEach(s=>new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const i=slides.indexOf(e.target);dots.forEach(d=>d.classList.remove('on'));if(dots[i])dots[i].classList.add('on')}})},{threshold:.5}).observe(s));
+document.addEventListener('keydown',e=>{const ci=dots.findIndex(d=>d.classList.contains('on'));if(['ArrowDown','ArrowRight',' '].includes(e.key)){e.preventDefault();slides[Math.min(ci+1,N-1)].scrollIntoView({behavior:'smooth'})}else if(['ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();slides[Math.max(ci-1,0)].scrollIntoView({behavior:'smooth'})}});
+</script>
+</body>
+</html>
