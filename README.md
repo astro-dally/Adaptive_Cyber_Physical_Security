@@ -40,12 +40,12 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 |:------|:-----:|:---------:|:------:|:--:|:---------------:|
 | Random Forest | 1 | 1.000 | 0.178 | 0.303 | **0.000** ❌ |
 | One-Class SVM | 1 | 0.907 | 0.145 | 0.249 | 0.145 |
-| Random Forest | 2 | 1.000 | 0.178 | 0.303 | **0.000** ❌ |
-| One-Class SVM | 2 | 0.907 | 0.145 | 0.249 | 0.145 |
-| **Hybrid (RF + OCSVM)** | **2** | **0.819** | **0.887** | **0.852** | **≥ 0.145** ✅ |
+| Random Forest | 2 | 1.000 | 0.130 | 0.240 | **~0.000** ❌ |
+| One-Class SVM | 2 | 0.660 | 0.040 | 0.070 | 0.040 |
+| **Hybrid (RF + OCSVM)** | **2** | **TBD** | **TBD** | **TBD** | **≥ 0.040** ✅ |
 | **Autoencoder** | **2** | — | — | — | **High** ✅ |
 
-> **Key Takeaway:** The Hybrid OR-fusion model raises F1 from 0.303 → **0.852** (+181%) and eliminates the zero zero-day recall gap, while the Autoencoder provides continuous anomaly scoring with ROC-AUC > 0.90.
+> **Key Takeaway:** The Hybrid OR-fusion model guarantees a baseline zero-day recall, while the Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.9168 and Avg Precision of 0.7578.
 
 ---
 
@@ -183,7 +183,7 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | **ν** | 0.05 (outlier fraction upper bound) |
 | **Training data** | 20,000 benign samples (StandardScaler applied) |
 | **Zero-day strategy** | All attacks are unseen by design |
-| **Strength** | Non-zero zero-day recall (14.5%) |
+| **Strength** | Non-zero zero-day recall (4.0%) |
 | **Weakness** | Low overall recall due to conservative boundary |
 
 ### Tier 3 — Autoencoder (Deep Anomaly Detector) — *Phase 2 New*
@@ -191,7 +191,7 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | Property | Value |
 |:---------|:------|
 | **Type** | Deep reconstruction-error anomaly detector |
-| **Architecture** | 49 → 32 → 16 → **8** → 16 → 32 → 49 |
+| **Architecture** | 68 → 128 → 64 → **32** → 64 → 128 → 68 |
 | **Loss** | Mean Squared Error |
 | **Optimizer** | Adam (lr = 10⁻³) |
 | **Training data** | Benign-only with early stopping |
@@ -206,8 +206,8 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | **Type** | Decision-level ensemble combiner |
 | **Logic** | `attack = RF_attack OR OCSVM_attack` |
 | **Guarantee** | `Recall_Hybrid ≥ max(Recall_RF, Recall_OCSVM)` |
-| **Strength** | Best aggregate F1 (0.852), non-zero zero-day recall |
-| **Trade-off** | Precision drops from 1.000 → 0.819 (acceptable for security) |
+| **Strength** | Combines Random Forest precision on seen threats with OCSVM anomaly detection |
+| **Trade-off** | Precision drops compared to Random Forest baseline (acceptable for security) |
 
 ---
 
