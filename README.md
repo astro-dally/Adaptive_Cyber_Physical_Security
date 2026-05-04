@@ -1,50 +1,73 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/scikit--learn-1.3+-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" />
-  <img src="https://img.shields.io/badge/TensorFlow-Keras-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" />
+  <img src="https://img.shields.io/badge/scikit--learn-1.8+-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white" />
+  <img src="https://img.shields.io/badge/TensorFlow-2.21-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" />
   <img src="https://img.shields.io/badge/Dataset-CIC--IDS--2018-00897B?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Phase-2%20Complete-4CAF50?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Phase-3%20Complete-4CAF50?style=for-the-badge" />
 </p>
 
 # 🛡️ Adaptive Cyber-Physical Security
 
-> **An adaptive multi-model intrusion detection system for zero-day threat generalization, evaluated on the CIC-IDS-2018 benchmark (8.2 M network flows, 13 attack families).**
+> **An adaptive multi-tier hybrid intrusion detection system for zero-day threat generalization, evaluated on the CIC-IDS-2018 benchmark (8.2 M network flows, 13 attack families).**
 
 ---
 
 ## 🧠 Core Idea
 
-Traditional intrusion detection systems fail in **open-world** environments: supervised classifiers achieve perfect precision on known attack signatures but provide **zero recall** against novel (zero-day) threats. This project builds a **multi-tier adaptive defense** that fuses discriminative classification with deep anomaly detection, delivering high-confidence known-attack identification **and** meaningful zero-day coverage through a single unified pipeline.
+Traditional intrusion detection systems fail in **open-world** environments: supervised classifiers achieve perfect precision on known attack signatures but provide **zero recall** against novel (zero-day) threats. This project builds a **multi-tier adaptive defense** that fuses discriminative classification with deep anomaly detection and learned latent-space representations, delivering high-confidence known-attack identification **and** meaningful zero-day coverage.
 
 ---
 
 ## 🏗️ System Architecture
 
-<p align="center">
-  <img src="adaptive_cyber_physical_ids_architecture.svg" alt="Adaptive Cyber-Physical IDS System Architecture" width="100%" />
-</p>
-
-### Data Flow
+### Pipeline Overview
 
 <p align="center">
-  <img src="cic18_project_pipeline.svg" alt="Project Data Flow Pipeline" width="100%" />
+  <img src="adaptive_ids_full_architecture.svg" alt="Adaptive Cyber-Physical IDS System Architecture" width="100%" />
 </p>
+
+### Hybrid Models (Phase 3)
+
+```
+  Hybrid 1 │ Standard AE + OC-SVM      (bottleneck space)
+  Hybrid 2 │ Standard AE + Isolation Forest  (bottleneck)
+  Hybrid 3 │ Standard AE + RF Pseudo-label   (raw 68-dim)
+  Hybrid 4 │ Sparse AE   + OC-SVM      (bottleneck space)
+  Hybrid 5 │ Denoising AE + OC-SVM     (bottleneck space)
+  Hybrid 6 │ Meta-Ensemble: avg of all 8 normalized scores
+```
 
 ---
 
 ## 📊 Results at a Glance
 
-### Phase 1 → Phase 2 Improvement
+### Phase 1 → Phase 2 → Phase 3 Progression
 
-| Model | Phase | Precision | Recall | F1 | Zero-Day Recall |
-|:------|:-----:|:---------:|:------:|:--:|:---------------:|
-| Random Forest | 1 | 1.000 | 0.178 | 0.303 | **0.000** ❌ |
-| One-Class SVM | 1 | 0.907 | 0.145 | 0.249 | 0.145 |
-| Random Forest | 2 | 1.000 | 0.130 | 0.240 | **~0.000** ❌ |
-| One-Class SVM | 2 | 0.660 | 0.040 | 0.070 | 0.040 |
-| **Autoencoder** | **2** | 0.501 | 0.017 | 0.034 | **0.017** |
+| Model | Phase | ROC-AUC | Precision | Recall | F1 | Zero-Day Recall |
+|:------|:-----:|:-------:|:---------:|:------:|:--:|:---------------:|
+| Random Forest | 1 | — | 1.000 | 0.178 | 0.303 | **0.000** ❌ |
+| One-Class SVM | 1 | — | 0.907 | 0.145 | 0.249 | 0.145 |
+| Random Forest | 2 | — | 1.000 | 0.130 | 0.240 | **~0.000** ❌ |
+| Autoencoder (baseline) | 2 | 0.8965 | 0.501 | 0.017 | 0.034 | 0.017 |
+| **Denoising AE alone** | **3** | **0.8867** | **0.818** | **0.079** | **0.143** | **0.079** ✅ |
+| Hybrid 3: AE + RF | 3 | 0.7920 | 0.498 | 0.017 | 0.034 | 0.017 |
+| Meta-Ensemble (H6) | 3 | 0.4140 | 0.220 | 0.005 | 0.010 | 0.005 |
 
-> **Key Takeaway:** The Autoencoder provides continuous anomaly scoring with ROC-AUC of 0.8965 and Avg Precision of 0.7578, effectively addressing the zero-day detection gap left by supervised models.
+### Phase 3 Full Model Comparison (P99 Threshold)
+
+| Model | ROC-AUC | Avg Prec. | F1 | Recall | Precision |
+|:------|:-------:|:---------:|:--:|:------:|:---------:|
+| Baseline: Standard AE | 0.8965 | 0.7578 | 0.0336 | 0.0174 | 0.5012 |
+| Hybrid 1: AE + OC-SVM | 0.4600 | 0.3137 | 0.0094 | 0.0048 | 0.2127 |
+| Hybrid 2: AE + Iso.Forest | 0.4231 | 0.3392 | 0.0116 | 0.0060 | 0.2508 |
+| Hybrid 3: AE + RF (pseudo) | 0.7920 | 0.5593 | 0.0335 | 0.0174 | 0.4976 |
+| Ref: Sparse AE alone | 0.8929 | 0.7597 | 0.0336 | 0.0174 | 0.4986 |
+| Hybrid 4: Sparse AE + OC-SVM | 0.4206 | 0.3007 | 0.0190 | 0.0098 | 0.3561 |
+| **Ref: Denoising AE alone** | **0.8867** | **0.7675** | **0.1433** | **0.0785** | **0.8179** |
+| Hybrid 5: DAE + OC-SVM | 0.4783 | 0.3186 | 0.0057 | 0.0029 | 0.1398 |
+| Hybrid 6: Meta-Ensemble | 0.4140 | 0.3024 | 0.0098 | 0.0050 | 0.2202 |
+
+> **Key Takeaway (Phase 3):** Standalone AE variants consistently outperform their hybrid counterparts. The **Denoising AE** achieves the best per-threshold F1 (0.1433) and precision (0.8179). Boundary models (OC-SVM, IF) in the 32-dim bottleneck space fail to separate latent distributions, degrading hybrid ROC-AUC below 0.50. **Representation quality is the bottleneck.**
 
 ---
 
@@ -53,62 +76,61 @@ Traditional intrusion detection systems fail in **open-world** environments: sup
 ```
 Adaptive_Cyber_Physical_Security/
 │
-├── 📂 pipeline/                          # Data preprocessing
-│   ├── full_preprocessing.py             #   Full pipeline: raw CSV → processed dataset
-│   └── preprocessing.py                  #   Lightweight notebook utility
+├── 📂 pipeline/
+│   ├── full_preprocessing.py             # Full pipeline: raw CSV → processed dataset
+│   └── preprocessing.py                  # Lightweight notebook utility
 │
-├── 📂 experiments/                       # All experimental code
+├── 📂 experiments/
 │   ├── 📂 eda/
-│   │   └── eda_cic18.ipynb               #   Exploratory data analysis
+│   │   └── eda_cic18.ipynb               # Exploratory data analysis
 │   ├── 📂 feature_engineering/
-│   │   └── fe_cic18.ipynb                #   Feature selection & engineering
+│   │   └── fe_cic18.ipynb                # Feature selection & engineering
 │   └── 📂 models/
-│       ├── rf_model.ipynb                #   Random Forest (zero-day split)
-│       ├── ocsvm_model.ipynb             #   One-Class SVM (benign-only)
-│       ├── hybrid_model.py               #   Hybrid RF + OCSVM (OR-fusion)
-│       └── autoencoder_model.ipynb       #   Deep Autoencoder anomaly detector
+│       ├── rf_model.ipynb                # Random Forest (zero-day split) [Phase 1]
+│       ├── ocsvm_model.ipynb             # One-Class SVM (benign-only)   [Phase 1]
+│       ├── hybrid_model.py               # Hybrid RF + OCSVM (OR-fusion) [Phase 1]
+│       ├── autoencoder_model.ipynb       # Deep Autoencoder              [Phase 2]
+│       └── final_hybrid_model.ipynb      # Hybrid AE + boundary models   [Phase 3] ⭐
 │
 ├── 📂 data/
 │   ├── 📂 raw/                           # Raw CIC-IDS-2018 daily CSVs
-│   └── 📂 processed/                    # Cleaned & engineered datasets
-│       ├── cic18_full_processed.csv      #   Main modeling file (8.2M × 52)
-│       └── clean_features.csv            #   Notebook FE artifact
+│   └── 📂 processed/
+│       ├── cic18_full_processed.csv      # Main modeling file (8.2M × 52)
+│       └── clean_features.csv            # Notebook FE artifact
 │
-├── 📂 outputs/plots/                     # All generated visualizations
-│   ├── 📂 eda/                           #   Label distribution, histograms, heatmaps
-│   ├── 📂 feature_engineering/           #   Post-cleaning distributions & correlations
-│   └── 📂 models/                        #   Model outputs & visualizations
-│       ├── 📂 rf_output/                 #   RF curves and confusion matrix
-│       ├── 📂 ocsvm_output/              #   OCSVM curves, scores, and matrix
-│       └── 📂 autoencoder_output/        #   AE: ROC, PR, threshold, per-attack, etc.
+├── 📂 outputs/plots/
+│   ├── 📂 eda/                           # Label distribution, histograms, heatmaps
+│   ├── 📂 feature_engineering/           # Post-cleaning distributions & correlations
+│   └── 📂 models/
+│       ├── 📂 rf_output/                 # RF curves and confusion matrix
+│       ├── 📂 ocsvm_output/              # OCSVM curves, scores, and matrix
+│       ├── 📂 autoencoder_output/        # AE: ROC, PR, threshold, per-attack
+│       └── 📂 hybird_output/             # Phase 3 hybrid & ensemble plots ⭐
 │
-├── comparison.html                       #   Interactive model comparison report
-├── 📂 docs/                              # Project documentation
-│   ├── literature_review.md              #   7-section literature survey
-│   ├── data_dictionary.md                #   Full column-level data dictionary
-│   ├── data_preprocessing_plan.md        #   Preprocessing strategy document
-│   └── theoretical_rigor.md              #   Theoretical justification
+├── comparison.html                       # Interactive model comparison report
 │
-├── 📂 report/                            # Written deliverables
-│   ├── Phase1_report.pdf                 #   Phase 1 compiled report
-│   ├── Phase_2_report.pdf                #   Phase 2 compiled report
-│   └── 📂 latex/
-│       ├── main.tex                      #   Phase 1 LaTeX source
-│       ├── references.bib                #   Phase 1 bibliography
-│       ├── phase2_main.tex               #   Phase 2 LaTeX source
-│       └── phase2_references.bib         #   Phase 2 bibliography
+├── 📂 docs/
+│   ├── literature_review.md
+│   ├── data_dictionary.md
+│   ├── data_preprocessing_plan.md
+│   └── theoretical_rigor.md
 │
-├── 📂 presentation/                      # Presentation materials
-│   ├── index.html                        #   Interactive slide deck
-│   ├── presentation.html                 #   HTML presentation
-│   ├── adaptive_cyber_security_presentation.html
-│   ├── index.pdf                         #   PDF export of slides
-│   └── Adaptive_Zero-Day_Detection.pdf.pdf
+├── 📂 report/
+│   ├── Phase1_report.pdf
+│   ├── Phase_2_report.pdf
+│   ├── phase2_main.tex                   # Phase 2 LaTeX source
+│   ├── phase2_references.bib             # Phase 2 bibliography
+│   ├── phase3_main.tex                   # Phase 3 LaTeX source ⭐
+│   └── phase3_references.bib             # Phase 3 bibliography ⭐
+│
+├── 📂 presentation/
+│   ├── index.html
+│   ├── presentation.html
+│   └── index.pdf
 │
 ├── 📂 references/                        # Reference papers (PDFs)
-│
-├── requirements.txt                      # Python dependencies
-└── README.md                             # ← You are here
+├── requirements.txt
+└── README.md
 ```
 
 ---
@@ -117,8 +139,7 @@ Adaptive_Cyber_Physical_Security/
 
 ### Prerequisites
 
-- Python 3.11+
-- ~16 GB RAM (for full 8.2M-row dataset)
+- Python 3.11+  |  ~16 GB RAM  |  AWS t3.large or equivalent recommended
 - Raw CIC-IDS-2018 CSV files ([download here](https://www.unb.ca/cic/datasets/ids-2018.html))
 
 ### Installation
@@ -131,31 +152,33 @@ pip install -r requirements.txt
 
 ### Step 1 — Preprocess
 
-Place raw CIC-IDS-2018 CSV files in `data/raw/`, then:
-
 ```bash
 python pipeline/full_preprocessing.py
+# → data/processed/cic18_full_processed.csv  (8.2M rows × 52 columns)
 ```
 
-This produces `data/processed/cic18_full_processed.csv` (8.2M rows × 52 columns).
-
-### Step 2 — Explore & Engineer Features
+### Step 2 — EDA & Feature Engineering
 
 ```bash
 jupyter notebook experiments/eda/eda_cic18.ipynb
 jupyter notebook experiments/feature_engineering/fe_cic18.ipynb
 ```
 
-### Step 3 — Train & Evaluate Models
+### Step 3 — Phase 1 & 2 Models
 
 ```bash
-# Train & Evaluate Models (Jupyter Notebooks & Scripts)
 jupyter notebook experiments/models/rf_model.ipynb           # Random Forest
 jupyter notebook experiments/models/ocsvm_model.ipynb        # One-Class SVM
 jupyter notebook experiments/models/autoencoder_model.ipynb  # Autoencoder
 ```
 
-All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/models/`.
+### Step 4 — Phase 3 Hybrid Models ⭐
+
+```bash
+jupyter notebook experiments/models/final_hybrid_model.ipynb
+# Runs all 6 hybrid configurations + Meta-Ensemble
+# Saves 7 comparison plots to outputs/plots/models/hybird_output/
+```
 
 ---
 
@@ -168,34 +191,41 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | **Type** | Supervised ensemble classifier |
 | **Estimators** | 100 bagged decision trees |
 | **Training data** | Benign + 1 seen attack (`dos attacks-hulk`) |
-| **Zero-day strategy** | Unseen attacks (`bot`, `dos attacks-slowhttptest`) withheld |
 | **Strength** | Perfect precision (1.000) on known threats |
-| **Weakness** | Zero zero-day recall — cannot detect novel attacks |
+| **Weakness** | Zero zero-day recall |
 
 ### Tier 2 — One-Class SVM (Kernel Anomaly Detector)
 
 | Property | Value |
 |:---------|:------|
 | **Type** | Semi-supervised anomaly detection |
-| **Kernel** | RBF, γ = `scale` |
-| **ν** | 0.05 (outlier fraction upper bound) |
-| **Training data** | 20,000 benign samples (StandardScaler applied) |
-| **Zero-day strategy** | All attacks are unseen by design |
-| **Strength** | Non-zero zero-day recall (4.0%) |
-| **Weakness** | Low overall recall due to conservative boundary |
+| **Kernel** | RBF, γ = `scale`, ν = 0.05 |
+| **Training data** | 20,000 benign samples |
+| **Strength** | Non-zero zero-day recall |
 
-### Tier 3 — Autoencoder (Deep Anomaly Detector) — *Phase 2 New*
+### Tier 3 — Autoencoder Variants (Deep Anomaly Detector)
 
-| Property | Value |
-|:---------|:------|
-| **Type** | Deep reconstruction-error anomaly detector |
-| **Architecture** | 68 → 128 → 64 → **32** → 64 → 128 → 68 |
-| **Loss** | Mean Squared Error |
-| **Optimizer** | Adam (lr = 10⁻³) |
-| **Training data** | Benign-only with early stopping |
-| **Zero-day strategy** | Elevated reconstruction error on attack flows |
-| **Strength** | Continuous anomaly score, threshold-tunable, per-attack profiling |
-| **Diagnostics** | ROC, PR-curve, error histograms, per-attack detection rates |
+| Property | Standard AE | Sparse AE | Denoising AE |
+|:---------|:-----------:|:---------:|:------------:|
+| **Architecture** | 68→128→64→**32**→64→128→68 | Same + L1 reg. | Same + GaussianNoise |
+| **Loss** | MSE | MSE + L1 | MSE |
+| **Special** | Baseline | λ=1e-4 bottleneck | σ=0.1 input noise |
+| **ROC-AUC** | 0.8965 | 0.8929 | 0.8867 |
+| **F1 @ P99** | 0.0336 | 0.0336 | **0.1433** |
+| **Precision @ P99** | 0.501 | 0.499 | **0.818** |
+
+### Phase 3 — Hybrid Configurations
+
+| Hybrid | Boundary Model | Feature Space | ROC-AUC |
+|:-------|:--------------|:-------------|:-------:|
+| Hybrid 1 | OC-SVM | AE bottleneck (32-dim) | 0.4600 |
+| Hybrid 2 | Isolation Forest | AE bottleneck (32-dim) | 0.4231 |
+| Hybrid 3 | RF Pseudo-label | Original (68-dim) | 0.7920 |
+| Hybrid 4 | OC-SVM | Sparse AE bottleneck | 0.4206 |
+| Hybrid 5 | OC-SVM | DAE bottleneck | 0.4783 |
+| **Hybrid 6** | **Meta-Ensemble** | **All 8 scores (avg)** | **0.4140** |
+
+> **Finding:** OC-SVM and IF fail to separate latent distributions in the 32-dim bottleneck space, consistently degrading AUC below 0.50. Hybrid 3 (RF in 68-dim space) maintains competitive AUC (0.7920) but is limited by sparse pseudo-labels.
 
 ---
 
@@ -208,42 +238,26 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 | Feature histograms | `outputs/plots/eda/feature_histograms.png` |
 | Correlation heatmap | `outputs/plots/eda/correlation_heatmap.png` |
 
-### Feature Engineering
-| Plot | File |
-|:-----|:-----|
-| Clean histograms | `outputs/plots/feature_engineering/clean_feature_histograms.png` |
-| Clean correlation | `outputs/plots/feature_engineering/clean_correlation_heatmap.png` |
-
-### Models
-| Plot | File |
-|:-----|:-----|
-| RF curves | `outputs/plots/models/rf_output/rf_curves.png` |
-| RF confusion matrix | `outputs/plots/models/rf_output/rf_confusion_matrix.png` |
-| OCSVM curves | `outputs/plots/models/ocsvm_output/ocsvm_curves.png` |
-| OCSVM score distribution | `outputs/plots/models/ocsvm_output/ocsvm_score_dist.png` |
-| OCSVM confusion matrix | `outputs/plots/models/ocsvm_output/ocsvm_confusion_matrix.png` |
-
-### Autoencoder Diagnostics
+### Autoencoder (Phase 2)
 | Plot | File |
 |:-----|:-----|
 | Training history | `outputs/plots/models/autoencoder_output/plot_training_history.png` |
 | Error histogram | `outputs/plots/models/autoencoder_output/plot_error_histogram.png` |
 | ROC curve | `outputs/plots/models/autoencoder_output/plot_roc_curve.png` |
-| Precision-Recall curve | `outputs/plots/models/autoencoder_output/plot_pr_curve.png` |
+| Precision-Recall | `outputs/plots/models/autoencoder_output/plot_pr_curve.png` |
 | Threshold sensitivity | `outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png` |
-| Confusion matrix | `outputs/plots/models/autoencoder_output/plot_confusion_matrix.png` |
 | Per-attack detection | `outputs/plots/models/autoencoder_output/plot_per_attack_detection.png` |
 
-### 🖼️ Key Evidence Visualized
-
-<p align="center">
-  <img src="outputs/plots/models/autoencoder_output/plot_roc_curve.png" width="48%" alt="Autoencoder ROC Curve" />
-  <img src="outputs/plots/models/autoencoder_output/plot_threshold_sensitivity.png" width="48%" alt="Threshold Sensitivity" />
-</p>
-<p align="center">
-  <img src="outputs/plots/models/autoencoder_output/plot_per_attack_detection.png" width="48%" alt="Per-Attack Detection Rate" />
-  <img src="outputs/plots/models/autoencoder_output/plot_pr_curve.png" width="48%" alt="Autoencoder PR Curve" />
-</p>
+### Phase 3 Hybrid & Ensemble ⭐
+| Plot | File |
+|:-----|:-----|
+| ROC curves (all models) | `outputs/plots/models/hybird_output/plot_roc_all_models.png` |
+| Precision-Recall (all) | `outputs/plots/models/hybird_output/plot_pr_all_models.png` |
+| Metric bar comparison | `outputs/plots/models/hybird_output/plot_metric_comparison.png` |
+| Meta-Ensemble confusion matrix | `outputs/plots/models/hybird_output/plot_confusion_matrix_ensemble.png` |
+| Per-attack: Hybrid vs AE | `outputs/plots/models/hybird_output/plot_per_attack_hybrid_vs_ae.png` |
+| Threshold sensitivity (hybrid) | `outputs/plots/models/hybird_output/plot_threshold_sensitivity_hybrid.png` |
+| RF feature importance | `outputs/plots/models/hybird_output/plot_rf_feature_importance.png` |
 
 ---
 
@@ -251,26 +265,38 @@ All outputs (confusion matrices, ROC curves, etc.) are saved to `outputs/plots/m
 
 | Deliverable | Location | Notes |
 |:------------|:---------|:------|
-| Phase 1 Report (PDF) | `report/Phase1_report.pdf` | Compiled IEEE-format report |
-| **Phase 2 Report (PDF)** | `report/Phase_2_report.pdf` | **Final Compiled Phase 2 IEEE-format report** |
-| Phase 1 LaTeX | `report/latex/main.tex` | Source + `references.bib` |
-| Phase 2 LaTeX | `report/latex/phase2_main.tex` | Source + `phase2_references.bib` |
-| Model Comparison | `comparison.html` | Open in browser for full detailed outputs |
+| Phase 1 Report (PDF) | `report/Phase1_report.pdf` | IEEE-format |
+| Phase 2 Report (PDF) | `report/Phase_2_report.pdf` | IEEE-format |
+| Phase 2 LaTeX | `report/phase2_main.tex` | + `phase2_references.bib` |
+| **Phase 3 LaTeX** ⭐ | `report/phase3_main.tex` | + `phase3_references.bib` |
+| Model Comparison | `comparison.html` | Open in browser |
 | Interactive Presentation | `presentation/index.html` | Open in browser |
-| HTML Presentation | `presentation/presentation.html` | Alternative format |
-| Slide PDF | `presentation/index.pdf` | PDF export |
 
-### Compiling Reports (Overleaf or Local)
+### Compiling Reports
 
 ```bash
-cd report/latex
-
-# Phase 1
-pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
+cd report
 
 # Phase 2
 pdflatex phase2_main.tex && bibtex phase2_main && pdflatex phase2_main.tex && pdflatex phase2_main.tex
+
+# Phase 3
+pdflatex phase3_main.tex && bibtex phase3_main && pdflatex phase3_main.tex && pdflatex phase3_main.tex
 ```
+
+---
+
+## 🧪 Evaluation Metrics
+
+| Metric | Definition | Why It Matters |
+|:-------|:-----------|:---------------|
+| Accuracy | (TP+TN) / Total | Overall correctness |
+| Precision | TP / (TP+FP) | Flagged attacks that are real |
+| Recall | TP / (TP+FN) | Real attacks caught |
+| F1-Score | Harmonic mean of P & R | Balanced measure |
+| **Zero-Day Recall** | TP_unseen / Total_unseen | **Core metric** |
+| ROC-AUC | Area under ROC curve | Threshold-free discriminative power |
+| PR-AUC | Area under PR curve | Performance under class imbalance |
 
 ---
 
@@ -278,10 +304,10 @@ pdflatex phase2_main.tex && bibtex phase2_main && pdflatex phase2_main.tex && pd
 
 | Document | Description |
 |:---------|:------------|
-| [`docs/literature_review.md`](docs/literature_review.md) | 7-section survey: IDS evolution, ML in cybersecurity, CIC-IDS-2018 justification |
-| [`docs/data_dictionary.md`](docs/data_dictionary.md) | Full column-level dictionary for all processed datasets |
-| [`docs/data_preprocessing_plan.md`](docs/data_preprocessing_plan.md) | Preprocessing strategy and design decisions |
-| [`docs/theoretical_rigor.md`](docs/theoretical_rigor.md) | Mathematical and methodological justification |
+| [`docs/literature_review.md`](docs/literature_review.md) | 7-section survey: IDS evolution, ML in cybersecurity |
+| [`docs/data_dictionary.md`](docs/data_dictionary.md) | Full column-level dictionary |
+| [`docs/data_preprocessing_plan.md`](docs/data_preprocessing_plan.md) | Preprocessing strategy |
+| [`docs/theoretical_rigor.md`](docs/theoretical_rigor.md) | Mathematical justification |
 
 ---
 
@@ -291,26 +317,13 @@ pdflatex phase2_main.tex && bibtex phase2_main && pdflatex phase2_main.tex && pd
 
 | Property | Value |
 |:---------|:------|
-| Total flows (processed) | 8,284,195 |
-| Feature columns | 49 numeric + 3 labels |
-| Benign traffic | 6,112,151 (73.8%) |
-| Attack traffic | 2,172,044 (26.2%) |
-| Attack families | 13 (DDoS, DoS, Bot, Bruteforce, Infiltration, SQL Injection, XSS) |
-| Preprocessing | ID removal → coercion → imputation → constant drop → correlation prune (ρ > 0.98) |
-
----
-
-## 🧪 Evaluation Metrics
-
-| Metric | Definition | Why It Matters |
-|:-------|:-----------|:---------------|
-| Accuracy | (TP+TN) / Total | Overall correctness (misleading under imbalance) |
-| Precision | TP / (TP+FP) | How many flagged attacks are real |
-| Recall | TP / (TP+FN) | How many real attacks are caught |
-| F1-Score | Harmonic mean of P & R | Balanced performance measure |
-| **Zero-Day Recall** | TP_unseen / (TP_unseen + FN_unseen) | **Core metric** — detection rate on unseen attack families |
-| ROC-AUC | Area under ROC | Discriminative power across all thresholds |
-| PR-AUC | Area under PR curve | Performance under class imbalance |
+| Total flows (raw) | 8,284,195 |
+| Flows used (Phase 3) | 3,215,110 |
+| Feature columns | 68 (after pruning) |
+| Benign traffic | 2,050,783 (63.8%) |
+| Attack traffic | 1,164,327 (36.2%) |
+| Attack families | 13 |
+| Preprocessing | ID removal → coercion → imputation → constant drop → corr. prune (ρ > 0.98) → RobustScaler |
 
 ---
 
@@ -318,24 +331,26 @@ pdflatex phase2_main.tex && bibtex phase2_main && pdflatex phase2_main.tex && pd
 
 | Name | Email | Institution |
 |:-----|:------|:------------|
-| **Pugazhendhi J** | pugazhendhi.j23csai@nst.rishihood.edu.in | Department of CS & AI, Rishihood University |
-| **Dally R** | dally.r23csai@nst.rishihood.edu.in | Department of CS & AI, Rishihood University |
+| **Pugazhendhi J** | pugazhendhi.j23csai@nst.rishihood.edu.in | Dept. of CS & AI, Rishihood University |
+| **Dally R** | dally.r23csai@nst.rishihood.edu.in | Dept. of CS & AI, Rishihood University |
 
 ---
 
 ## 📖 Key References
 
-1. Sharafaldin, I., et al. "Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization." *ICISSP*, 2018.
+1. Sharafaldin, I., et al. "Toward Generating a New Intrusion Detection Dataset." *ICISSP*, 2018.
 2. Breiman, L. "Random Forests." *Machine Learning*, 45(1), 2001.
 3. Schölkopf, B., et al. "Estimating the Support of a High-Dimensional Distribution." *Neural Computation*, 2001.
-4. Chandola, V., et al. "Anomaly Detection: A Survey." *ACM Computing Surveys*, 2009.
-5. Buczak, A.L. & Guven, E. "A Survey of Data Mining and Machine Learning Methods for Cyber Security Intrusion Detection." *IEEE COMST*, 2016.
-6. Kim, J., et al. "An Intrusion Detection Model Based on a Convolutional Neural Network." *JMIS*, 2020.
-7. Almalawi, A., et al. "An Intrusion Detection Model to Detect Zero-Day Attacks in Unseen Data Using Machine Learning." *PLOS ONE*, 2024.
+4. Vincent, P., et al. "Stacked Denoising Autoencoders." *JMLR*, 2010.
+5. Liu, F.T., et al. "Isolation Forest." *ICDM*, 2008.
+6. Chandola, V., et al. "Anomaly Detection: A Survey." *ACM Computing Surveys*, 2009.
+7. Dietterich, T.G. "Ensemble Methods in Machine Learning." *LNCS*, 2000.
+8. Almalawi, A., et al. "An IDS to Detect Zero-Day Attacks Using ML." *PLOS ONE*, 2024.
 
 ---
 
 <p align="center">
-  <strong>Phase 1:</strong> EDA · Feature Engineering · Baseline Models &nbsp;&nbsp;│&nbsp;&nbsp;
-  <strong>Phase 2:</strong> Autoencoder · Hybrid Fusion · Full-Scale Evaluation
+  <strong>Phase 1:</strong> EDA · Feature Engineering · RF · OC-SVM &nbsp;&nbsp;│&nbsp;&nbsp;
+  <strong>Phase 2:</strong> Autoencoder · Hybrid Fusion · Full-Scale Evaluation &nbsp;&nbsp;│&nbsp;&nbsp;
+  <strong>Phase 3:</strong> Learned Representations · Hybrid AE Models · Meta-Ensemble
 </p>
