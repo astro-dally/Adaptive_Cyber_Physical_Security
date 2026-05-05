@@ -149,6 +149,7 @@ Adaptive_Cyber_Physical_Security/
 
 - Python 3.11+  |  ~16 GB RAM  |  AWS t3.large or equivalent recommended
 - Raw CIC-IDS-2018 CSV files ([download here](https://www.unb.ca/cic/datasets/ids-2018.html))
+- Docker (optional, for containerized execution)
 
 ### Installation
 
@@ -157,6 +158,20 @@ git clone <repo-url>
 cd Adaptive_Cyber_Physical_Security
 pip install -r requirements.txt
 ```
+
+### Docker Setup (For Evaluators)
+
+If you prefer to run the application in an isolated container without installing Python dependencies manually, use Docker:
+
+```bash
+# Build the Docker image
+docker build -t adaptive-ids-app .
+
+# Run the container (starts the Streamlit app)
+docker run -p 8501:8501 adaptive-ids-app
+```
+
+Then, open `http://localhost:8501` in your browser.
 
 ### Step 1 — Preprocess
 
