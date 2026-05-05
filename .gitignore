@@ -26,8 +26,17 @@ ids2018/
 *.csv
 *.zip
 *.parquet
-# Exception for demo data so the app runs out-of-the-box
+# Exception for demo data and models so the app runs out-of-the-box
 !demo_data.csv
+!ids_2018/
+!ids_2018/outputs/
+!ids_2018/outputs/hybrid/
+!ids_2018/outputs/robust_scaler.joblib
+!ids_2018/outputs/autoencoder_best.keras
+!ids_2018/outputs/sparse_ae_best.keras
+!ids_2018/outputs/denoising_ae_best.keras
+!ids_2018/outputs/hybrid/rf_pseudo_label_final.joblib
+!ids_2018/outputs/hybrid/model_comparison.csv
 
 # Python / IDE
 __pycache__/
