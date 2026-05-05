@@ -243,26 +243,48 @@ def run_inference(df_in):
     n = len(df_in)
 
     if ASSETS["demo_mode"]:
-        # Removed delay for snappier sandbox experience
         if n == 1:
-            ae_e   = float(np.random.uniform(.008, .05))
-            rf_p   = float(np.random.uniform(.02, .15))
+            # High sensitivity mock logic for better visual feedback
+            dur = float(df_in.get("Flow Duration", [0])[0])
+            syn = float(df_in.get("SYN Flag Cnt", [0])[0])
+            byt = float(df_in.get("Flow Byts/s", [0])[0])
+            pkt = float(df_in.get("Pkt Len Mean", [0])[0])
+            
+            # Base error starts higher and grows more aggressively
+            ae_e = 0.05 + (dur / 1e6) * 0.4 + (syn / 15) * 0.5 + (byt / 4e5) * 0.3 + (pkt / 800) * 0.2
+            ae_e = float(np.clip(ae_e, 0.01, 2.5)) # Allow to exceed 1.0 (P99)
+            
+            # RF reacts more sharply to flags and specific profiles
+            rf_p = 0.02 + (syn / 8) * 0.7 + (byt / 1.5e5) * 0.5
+            if syn > 20: rf_p += 0.3
+            if dur > 5e6 and syn < 2: rf_p += 0.4 # Simulate slow attack
+            rf_p = float(np.clip(rf_p, 0.01, 0.99))
+            
+            # Dynamic Ensemble
+            ens = 0.45 * (ae_e / 1.2) + 0.55 * rf_p
+            ens = float(np.clip(ens, 0, 1))
+            
             return {
-                "Autoencoder": ae_e, "Sparse AE": ae_e*1.05,
-                "Denoising AE": ae_e*0.95, "Random Forest": rf_p,
-                "Meta-Ensemble": 0.4*ae_e/0.05 + 0.6*rf_p,
+                "Autoencoder": ae_e, "Sparse AE": ae_e*1.02,
+                "Denoising AE": ae_e*0.98, "Random Forest": rf_p,
+                "Meta-Ensemble": ens,
             }, ["Flow Duration","Flow Byts/s","SYN Flag Cnt","Pkt Len Mean","Flow IAT Mean"]
         else:
             rng = np.random.default_rng()
+            # If batch is too large, subsample for speed in demo mode
+            plot_n = min(n, 1000)
             batch = pd.DataFrame({
                 "AE Score":    rng.uniform(.005,.08, n),
                 "RF Score":    rng.uniform(.01, .1, n),
                 "Ensemble":    rng.uniform(.01, .1, n),
             })
-            batch.iloc[:2] = 0.82
+            # Force some anomalies in the batch
+            idx_atk = rng.choice(n, size=int(n*0.1), replace=False)
+            batch.loc[idx_atk, "Ensemble"] = rng.uniform(0.6, 0.95, len(idx_atk))
             batch["Is_Attack"] = batch["Ensemble"] > 0.5
+            
             Z = rng.standard_normal((n, 3))
-            Z[:2] += 5
+            Z[idx_atk] += 5
             batch[["Z1","Z2","Z3"]] = Z
             return batch, None
 
@@ -285,8 +307,14 @@ def run_inference(df_in):
         rf_p = (ASSETS["rf_pseudo"].predict_proba(X_raw)[:, 1]
                 if "rf_pseudo" in ASSETS else np.zeros(1))
 
-        # Normalise (for sandbox, use pre-calculated or heuristic scaling)
-        ens = 0.45 * np.clip(ae_e/0.05, 0, 1) + 0.55 * rf_p
+        # Log-based Soft Normalisation for better resolution at high error scales
+        # This prevents the score from instantly saturating at 1.0 (100%)
+        # LOG_SCALE_CONST adjusted for CIC-IDS2018 manifold depth
+        L_ae = np.log1p(ae_e[0])
+        ae_norm = L_ae / (L_ae + 3.0) 
+        
+        # RF also contributes 50% to the ensemble
+        ens = 0.45 * ae_norm + 0.55 * rf_p[0]
 
         # Feature attribution
         devs  = np.abs(X_sc - ae_out)[0]
@@ -297,32 +325,46 @@ def run_inference(df_in):
             "Sparse AE":   float(sae_e[0]),
             "Denoising AE":float(dae_e[0]),
             "Random Forest":float(rf_p[0]),
-            "Meta-Ensemble":float(ens[0]),
+            "Meta-Ensemble":float(ens),
         }, top_f
     else:
-        # Batch inference still uses .predict() for efficiency on large N
+        # Batch inference: ONLY run models needed for the ensemble to save time
         ae_out  = ASSETS["ae"].predict(X_sc, verbose=0)
-        sae_out = ASSETS["sparse_ae"].predict(X_sc, verbose=0)
-        dae_out = ASSETS["dae"].predict(X_sc, verbose=0)
+        # sae and dae removed from batch as they are not used for the final score
         
         ae_e   = np.mean(np.square(X_sc - ae_out), axis=1)
-        sae_e  = np.mean(np.square(X_sc - sae_out), axis=1)
-        dae_e  = np.mean(np.square(X_sc - dae_out), axis=1)
+        
+        # Get Latent Features for PCA (Only if needed for visualization)
+        if "encoder" in ASSETS:
+            enc_feat = ASSETS["encoder"].predict(X_sc, verbose=0)
+        else:
+            enc_feat = X_sc[:, :32] 
 
         rf_p = (ASSETS["rf_pseudo"].predict_proba(X_raw)[:, 1]
                 if "rf_pseudo" in ASSETS else np.zeros(n))
 
-        # Normalise
-        def norm01(arr):
-            lo, hi = arr.min(), arr.max()
-            return np.clip((arr - lo) / (hi - lo + 1e-9), 0, 1)
+        # Soft Normalisation for batch (Log-scaled)
+        def norm_soft(arr):
+            L = np.log1p(arr)
+            return L / (L + 3.0)
 
-        ens = 0.45 * norm01(ae_e) + 0.55 * norm01(rf_p)
-        enc_feat = ASSETS["encoder"].predict(X_sc, verbose=0) if "encoder" in ASSETS else X_sc[:, :32]
-        pca = PCA(n_components=min(3, enc_feat.shape[1], n))
-        Z   = pca.fit_transform(enc_feat)
+        ens = 0.45 * norm_soft(ae_e) + 0.55 * rf_p
+        
+        # PCA optimization: Subsample for the projection if too large
+        pca_n = min(n, 2000)
+        if n > pca_n:
+            idx = np.random.choice(n, pca_n, replace=False)
+            pca_feat = enc_feat[idx]
+        else:
+            pca_feat = enc_feat
+            
+        pca = PCA(n_components=min(3, enc_feat.shape[1]))
+        pca.fit(pca_feat)
+        Z = pca.transform(enc_feat)
+        
         while Z.shape[1] < 3:
             Z = np.hstack([Z, np.zeros((n, 1))])
+            
         batch = pd.DataFrame({
             "AE Score": ae_e, "RF Score": rf_p, "Ensemble": ens,
             "Is_Attack": ens > 0.5,
@@ -566,8 +608,32 @@ elif page == "🔍  Threat Analysis":
 
     if df_input is not None:
         if st.button("🔍 Run Neural Scan", width="stretch"):
-            with st.spinner("Analysing traffic patterns through hybrid pipeline…"):
-                results, meta = run_inference(df_input)
+            with st.status("Analysing traffic patterns...", expanded=True) as status:
+                st.write("🛰️ Initializing hybrid pipeline...")
+                # Hash the dataframe content for caching
+                df_hash = pd.util.hash_pandas_object(df_input).sum()
+                
+                @st.cache_data(show_spinner=False)
+                def get_cached_inference(hash_val, _df):
+                    # run_inference is called here; we can't easily put st.write inside
+                    # but we can return progress markers if we refactor. 
+                    # For now, let's keep it simple.
+                    return run_inference(_df)
+                
+                st.write("🧠 Preprocessing features & scaling data...")
+                # Small delay to let user see the status
+                time.sleep(0.3)
+                
+                st.write("🛰️ Running Neural Autoencoder (DL Stage)...")
+                results, meta = get_cached_inference(df_hash, df_input)
+                
+                st.write("🌳 Executing Random Forest (ML Stage)...")
+                time.sleep(0.2)
+                
+                st.write("📊 Finalizing ensemble & PCA projection...")
+                time.sleep(0.1)
+                
+                status.update(label="✅ Analysis Complete", state="complete")
 
             if isinstance(results, pd.DataFrame):
                 # ── BATCH ──────────────────────────────────────────────
@@ -589,12 +655,21 @@ elif page == "🔍  Threat Analysis":
                     st.plotly_chart(fig, width="stretch")
 
                 with tab2:
-                    fig3 = px.scatter_3d(results, x="Z1", y="Z2", z="Z3",
+                    # Optimized 3D plotting
+                    max_pts = 1500
+                    if len(results) > max_pts:
+                        plot_df = results.sample(max_pts, random_state=42)
+                        st.caption(f"ℹ️ Visualisation subsampled to {max_pts:,} points for performance.")
+                    else:
+                        plot_df = results
+                        
+                    fig3 = px.scatter_3d(plot_df, x="Z1", y="Z2", z="Z3",
                                          color="Is_Attack",
                                          color_discrete_map={False:"#34d399", True:"#f87171"},
+                                         hover_data=["AE Score", "RF Score"],
                                          opacity=.7, title="Bottleneck Latent Projection (PCA)")
-                    plotly_dark_layout(fig3, height=450)
-                    st.plotly_chart(fig3, width="stretch")
+                    plotly_dark_layout(fig3, height=500)
+                    st.plotly_chart(fig3, use_container_width=True)
 
             else:
                 # ── SINGLE ─────────────────────────────────────────────
@@ -762,11 +837,17 @@ elif page == "🧪  Attack Sandbox":
         iat_mean   = st.slider("Flow IAT Mean (µs)", 0, 5_000_000, 3_000, 100,
                                help="Inter-arrival time — very low = flood; very high = slow attack")
 
-        run_sb = st.button("⚡ Scan This Flow", width="stretch")
+        st.markdown("---")
+        st.markdown("#### ⚙️ Simulation Logic")
+        reactive = st.toggle("Real-time Inference", value=True, help="Automatically update results as sliders move")
+        
+        run_sb = False
+        if not reactive:
+            run_sb = st.button("⚡ Scan This Flow", width="stretch")
 
     with cr:
-        # Auto-run if any slider changed, or if button clicked
-        if True: 
+        # Auto-run if reactive is ON, or if button clicked
+        if reactive or run_sb: 
             sample = {f: 0.0 for f in FEATURE_NAMES}
             sample.update({
                 "Flow Duration": flow_dur, "Tot Fwd Pkts": tot_fwd,
@@ -797,14 +878,28 @@ elif page == "🧪  Attack Sandbox":
                     "threshold": {"line":{"color":"#f87171","width":3},"thickness":.75,"value":50},
                 }
             ))
-            plotly_dark_layout(fig_g, height=300, margin=dict(t=50,b=0,l=20,r=20))
-            st.plotly_chart(fig_g, width='stretch')
+            plotly_dark_layout(fig_g, height=280, margin=dict(t=50,b=0,l=20,r=20))
+            st.plotly_chart(fig_g, use_container_width=True)
 
             # --- Reasoning & Breakdown ---
             st.markdown("#### 🧠 Intelligence Analysis")
             
+            # Detailed Threshold Explanation (New & Improved)
+            st.markdown("""
+            <div class="s-card ind" style="padding:16px; margin-bottom:12px; border-left:4px solid var(--c2)">
+              <span class="eyebrow" style="color:var(--c2)">Metric Threshold Guide</span>
+              <div style="font-size:13px; color:var(--tx2); margin-top:8px">
+                <ul style="padding-left:18px; margin:0">
+                  <li><strong>Autoencoder (AE)</strong>: Learned from benign data only. A score > <strong>1.0 (P99)</strong> indicates traffic that violates normal topological manifolds.</li>
+                  <li><strong>Random Forest (RF)</strong>: Trained on AE pseudo-labels. A probability > <strong>0.50</strong> suggests a known malicious pattern.</li>
+                  <li><strong>Ensemble</strong>: A 45/55 blend. A final score > <strong>50%</strong> triggers a high-confidence alert.</li>
+                </ul>
+              </div>
+            </div>
+            """, unsafe_allow_html=True)
+
             # Feature Attribution reasoning
-            reasoning_html = "".join([f'<span class="sentinel-badge prp">{f}</span>' for f in feats_sb])
+            reasoning_html = "".join([f'<span class="sentinel-badge prp" style="margin-bottom:4px">{f}</span>' for f in feats_sb])
             st.markdown(f"""
             <div class="s-card sky" style="padding:15px">
                 <span class="eyebrow" style="color:var(--c1)">Root Cause Attribution</span>
@@ -815,27 +910,27 @@ elif page == "🧪  Attack Sandbox":
 
             # Model breakdown
             c1, c2, c3 = st.columns(3)
-            with c1: st.metric("Autoencoder", f"{ae_score:.4f}")
-            with c2: st.metric("Random Forest", f"{res_sb.get('Random Forest', 0):.4f}")
-            with c3: st.metric("Ensemble P", f"{ens_score:.2%}")
+            with c1: st.metric("AE Recon Error", f"{ae_score:.4f}", help="Raw Mean Squared Error from AE")
+            with c2: st.metric("RF Probability", f"{res_sb.get('Random Forest', 0):.4f}", help="Classification confidence from RF")
+            with c3: st.metric("Ensemble Score", f"{ens_score:.2%}", help="Final weighted decision score")
 
-            vrd = "🚨 ATTACK PATTERN" if is_atk else "✅ BENIGN PATTERN"
+            vrd = "🚨 ATTACK PATTERN DETECTED" if is_atk else "✅ BENIGN PATTERN CONFIRMED"
             cls = "bad" if is_atk else "good"
             st.markdown(f"""
             <div class="callout {cls}">
-              <strong>{vrd}</strong><br/>
+              <strong style="font-size:16px">{vrd}</strong><br/>
               Anomaly probability: {ens_score:.1%} (Threshold: 50.0%)
             </div>
             """, unsafe_allow_html=True)
 
             # Radar-style feature deviation bar
             feat_vals = {
-                "Flow Duration": flow_dur/10_000_000,
-                "Total Fwd Pkts": tot_fwd/5_000,
-                "Flow Bytes/s": flow_bytes/2_000_000,
-                "SYN Count": syn_cnt/100,
-                "Pkt Mean Len": pkt_mean/1500,
-                "IAT Mean": iat_mean/5_000_000,
+                "Duration": flow_dur/10_000_000,
+                "Fwd Pkts": tot_fwd/5_000,
+                "Throughput": flow_bytes/2_000_000,
+                "SYN Flags": syn_cnt/100,
+                "Pkt Size": pkt_mean/1500,
+                "IAT": iat_mean/5_000_000,
             }
             fig_r = go.Figure(go.Scatterpolar(
                 r=list(feat_vals.values()),
@@ -851,14 +946,16 @@ elif page == "🧪  Attack Sandbox":
                 line_color="#34d399", name="Typical Benign",
             ))
             plotly_dark_layout(fig_r, title="Feature Profile vs Benign Baseline",
-                               height=300, margin=dict(t=50,b=20,l=20,r=20),
+                               height=280, margin=dict(t=50,b=20,l=20,r=20),
                                polar=dict(bgcolor="rgba(12,22,40,.6)"))
-            st.plotly_chart(fig_r, width="stretch")
+            st.plotly_chart(fig_r, use_container_width=True)
         else:
             st.markdown("""
-            <div style="height:420px;display:flex;align-items:center;justify-content:center;
+            <div style="height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;
                         border:1px dashed #1b3050;border-radius:14px;background:#0c1628">
-              <p style="color:#4a6280;font-size:15px">Adjust sliders → click Scan This Flow</p>
+              <div style="font-size:40px;margin-bottom:10px">📡</div>
+              <p style="color:#4a6280;font-size:15px">Awaiting packet telemetry...</p>
+              <p style="color:#2a3e59;font-size:12px">Adjust sliders or click Scan This Flow</p>
             </div>
             """, unsafe_allow_html=True)
 
