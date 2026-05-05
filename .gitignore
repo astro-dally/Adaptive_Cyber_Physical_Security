@@ -1,7 +1,44 @@
+# Virtual Environment
+venv/
+**/venv/
+env/
+**/env/
+.env
+
+# Model Artifacts (Large Files)
+*.keras
+*.joblib
+*.npy
+*.h5
+*.pkl
+outputs/
+**/outputs/
+cache/
+**/cache/
+
+# Data Files
 data/
+**/data/
+ids_2018/
+**/ids_2018/
+ids2018/
+**/ids2018/
 *.csv
 *.zip
 *.parquet
-**pycache**/
+# Exception for demo data so the app runs out-of-the-box
+!demo_data.csv
+
+# Python / IDE
+__pycache__/
+*.py[cod]
+*$py.class
 .ipynb_checkpoints/
 .DS_Store
+.vscode/
+.idea/
+.streamlit/
+
+# Research / Scratch
+scratch/
+experiments/models/checkpoints/
